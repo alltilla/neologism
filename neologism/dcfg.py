@@ -453,13 +453,13 @@ class DCFG:
     # Misc
 
     def copy(self):
+        """Returns a copy of the grammar."""
         copied = DCFG()
         copied.__graph = self.__graph.copy()  # Shallow copy, but we do not store containers, so it is okay
         copied.__next_rule_id = self.__next_rule_id
         copied.__start_symbol = self.__start_symbol
 
         return copied
-        # TODO: add doc
 
     def load_yacc_file(self, file_path: str) -> None:
         """Load rules from a yacc file.
