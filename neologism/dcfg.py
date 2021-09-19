@@ -213,7 +213,7 @@ class DCFG:
 
         See Also
         --------
-        symbols, nonterminals
+        symbols, nonterminals, is_symbol_terminal, make_symbol_terminal
         ??? : clean up unused symbols, etc...
 
         Examples
@@ -237,7 +237,7 @@ class DCFG:
 
         See Also
         --------
-        symbols, terminals
+        symbols, terminals, is_symbol_terminal, make_symbol_terminal
         ??? : clean up unused symbols, etc...
 
         Examples
@@ -268,6 +268,10 @@ class DCFG:
             If symbol is not str.
         ValueError
             If symbol was not in the grammar.
+
+        See Also
+        --------
+        symbols
 
         Examples
         --------
@@ -349,6 +353,10 @@ class DCFG:
             If symbol is not str.
         ValueError
             If symbol was not in the grammar.
+
+        See Also
+        --------
+        symbols, terminals, nonterminals, is_symbol_terminal
 
         Examples
         --------
