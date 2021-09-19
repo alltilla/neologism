@@ -5,9 +5,6 @@ from neologism import DCFG
 from neologism import Rule
 
 
-# TODO yacc test should be just 1 TC, all testcases should be done natively
-
-
 @pytest.fixture
 def dcfg() -> DCFG:
     rules = [
@@ -137,6 +134,11 @@ def test_add_rule(dcfg: DCFG):
     dcfg.add_rule(Rule("NT_1", ("foo",)))
 
     assert Rule("NT_1", ("foo",)) in dcfg.rules
+
+
+def test_private_rule_exists(dcfg: DCFG):
+    assert dcfg._DCFG__rule_exists(Rule("NT_1", ("t_3", "t_4", "NT_1")))
+    assert not dcfg._DCFG__rule_exists(Rule("NT_1", ("foo",)))
 
 
 def test_remove_rule(dcfg: DCFG):

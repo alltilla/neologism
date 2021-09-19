@@ -120,12 +120,14 @@ class DCFG:
         """
         utils.raise_type_error_if_not_type_of(rule, Rule)
 
+        if self.__rule_exists(rule):
+            return
+
         rule_id = self.__get_next_rule_id()
 
         self.__graph.add_edge(rule.lhs, rule_id)
         for index, symbol in enumerate(rule.rhs):
             self.__graph.add_edge(rule_id, symbol, index=index)
-        # TODO: what to do with rule added twice?
 
     def remove_rule(self, rule: Rule) -> None:
         """Remove a rule from the grammar.
@@ -449,6 +451,21 @@ class DCFG:
         self.__next_rule_id += 1
 
         return RuleId(next_rule_id)
+
+    def __rule_exists(self, rule: Rule):
+        assert isinstance(rule, Rule)
+
+        try:
+            rule_ids = self.__graph.successors(rule.lhs)
+        except networkx.NetworkXError:
+            return False
+
+        for rule_id in rule_ids:
+            rhs = self.__get_rhs_by_rule_id(rule_id)
+            if rhs == rule.rhs:
+                return True
+
+        return False
 
     def __get_lhs_by_rule_id(self, rule_id: RuleId):
         assert isinstance(rule_id, RuleId)
