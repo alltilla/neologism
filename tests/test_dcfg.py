@@ -222,6 +222,11 @@ def test_make_symbol_terminal_not_present(dcfg: DCFG):
         dcfg.make_symbol_terminal("NT_99")
 
 
+def test_is_symbol_terminal(dcfg: DCFG):
+    assert not dcfg.is_symbol_terminal("NT_1")
+    assert dcfg.is_symbol_terminal("t_1")
+
+
 def test_start_symbol(dcfg: DCFG):
     dcfg.start_symbol = "NT_1"
     assert dcfg.start_symbol == "NT_1"

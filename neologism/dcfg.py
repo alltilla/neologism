@@ -225,7 +225,7 @@ class DCFG:
         >>> dcfg.terminals
         {'b', 'x', 'z', '1', '3', 'y', '2', 'd'}
         """
-        return set(filter(lambda node: isinstance(node, str) and self.__is_symbol_terminal(node), self.__graph.nodes))
+        return set(filter(lambda node: isinstance(node, str) and self.is_symbol_terminal(node), self.__graph.nodes))
 
     @property
     def nonterminals(self) -> typing.Set[str]:
@@ -249,9 +249,7 @@ class DCFG:
         >>> dcfg.nonterminals
         {'c', 'a'}
         """
-        return set(
-            filter(lambda node: isinstance(node, str) and not self.__is_symbol_terminal(node), self.__graph.nodes)
-        )
+        return set(filter(lambda node: isinstance(node, str) and not self.is_symbol_terminal(node), self.__graph.nodes))
 
     def remove_symbol(self, symbol: str) -> None:
         """Remove a symbol from the grammar.
@@ -290,6 +288,46 @@ class DCFG:
         self.make_symbol_terminal(symbol)
         try:
             self.__graph.remove_node(symbol)
+        except networkx.NetworkXError:
+            raise ValueError("{} not in symbols".format(symbol))
+
+    def is_symbol_terminal(self, symbol: str):
+        """Checks whether a symbol is terminal in the grammar.
+
+        Parameters
+        ----------
+        symbol : str
+            Symbol to check.
+
+        Raises
+        ------
+        TypeError
+            If symbol is not str.
+        ValueError
+            If symbol was not in the grammar.
+
+        See Also
+        --------
+        symbols, terminals, nonterminals, make_symbol_terminal
+
+        Examples
+        --------
+        >>> dcfg = DCFG()
+        >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
+        >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
+        >>> dcfg.terminals
+        {'b', 'z', 'y', 'x', 'd'}
+        >>> dcfg.nonterminals
+        {'c', 'a'}
+        >>> dcfg.is_symbol_terminal("a")
+        False
+        >>> dcfg.is_symbol_terminal("b")
+        True
+        """
+        utils.raise_type_error_if_not_type_of(symbol, str)
+
+        try:
+            return len(list(self.__graph.successors(symbol))) == 0
         except networkx.NetworkXError:
             raise ValueError("{} not in symbols".format(symbol))
 
@@ -496,11 +534,6 @@ class DCFG:
 
         return Rule(lhs, rhs)
 
-    def __is_symbol_terminal(self, symbol: str):
-        assert isinstance(symbol, str)
-
-        return len(list(self.__graph.successors(symbol))) == 0
-
     def __expand_rhs_of_rule_by_id(self, rule_id: RuleId) -> typing.List[Clause]:
         assert isinstance(rule_id, RuleId)
 
@@ -517,7 +550,7 @@ class DCFG:
 
         expansions: typing.List[Clause] = []
 
-        if self.__is_symbol_terminal(symbol):
+        if self.is_symbol_terminal(symbol):
             expansion: Clause = [symbol]
             expansions.append(expansion)
 
