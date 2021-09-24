@@ -7,7 +7,7 @@ requirements = ["networkx"]
 
 setuptools.setup(
     name="neologism",
-    version="0.0.1",
+    version="0.0.2",
     author="Attila Szakacs",
     author_email="szakacs.attila96@gmail.com",
     description="Dynamically modifiable context-free grammar written in python",
