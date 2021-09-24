@@ -16,6 +16,9 @@ jobs:
           - "3.7"
           - "3.8"
           - "3.9"
+        build:
+          - true
+          - false
       fail-fast: false
 
     container:
@@ -28,13 +31,28 @@ jobs:
       - name: Setup environment
         run: |
           pip install -r requirements.txt
-          pip install pytest
+          pip install pytest build
           apt update
           apt install -y bison
 
+      - name: build
+        if: matrix.build
+        run: |
+          python -m build
+
+      - name: install
+        if: matrix.build
+        run: |
+          pip install dist/*.whl
+
       - name: pytest
         run: |
-          python -m pytest
+          if [ ${{ matrix.build }} = true ]
+          then
+            pytest --import-mode=importlib
+          else
+            pytest
+          fi
 
   style-check:
     runs-on: ubuntu-latest
