@@ -6,6 +6,10 @@ from tempfile import NamedTemporaryFile
 from .rule import Rule
 
 
+class YaccDecodeError(Exception):
+    pass
+
+
 def __run_in_shell(command: list):
     proc = Popen(command, stderr=DEVNULL, stdout=DEVNULL)
     proc.wait()
@@ -18,7 +22,7 @@ def __yacc2xml(yacc_file_path: str):
 
     try:
         if not __run_in_shell(["bison", "--xml=" + xml_file.name, "--output=/dev/null", yacc_file_path]):
-            raise Exception("Failed to convert to xml:\n{}\n".format(yacc_file_path))
+            raise YaccDecodeError("Failed to parse yacc file: {}".format(yacc_file_path))
     except FileNotFoundError:
         raise ChildProcessError("bison executable not found. PATH: {}".format(environ.get("PATH", "")))
 

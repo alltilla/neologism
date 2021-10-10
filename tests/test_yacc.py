@@ -1,7 +1,7 @@
 from tempfile import NamedTemporaryFile
 import pytest
 
-from neologism.yacc import parse
+from neologism.yacc import parse, YaccDecodeError
 from neologism import Rule
 
 
@@ -46,10 +46,9 @@ test_opts
 
 
 def test_failed_parse():
-    with pytest.raises(Exception) as e:
+    with pytest.raises(YaccDecodeError):
         yacc_file = __create_temp_file_with_content("invalid yacc string")
         parse(yacc_file.name)
-    assert "Failed to convert to xml:" in str(e.value)
 
 
 def test_parse_yacc(yacc_file):
