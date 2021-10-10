@@ -409,7 +409,7 @@ class DCFG:
         :param file_path: The path of the yacc file.
         :type file_path: str
 
-        :raise ???: If ``bison`` is not available on the system.
+        :raise ChildProcessError: If ``bison`` is not available on the system.
         """
         rules = yacc_parse(file_path)
 
@@ -418,7 +418,6 @@ class DCFG:
 
         self.remove_symbol("$end")
         self.start_symbol = "$accept"
-        # TODO: Exception handling from bison
 
     # Private functions
 
