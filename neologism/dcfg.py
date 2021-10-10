@@ -1,5 +1,5 @@
+from __future__ import annotations
 import typing
-
 import networkx
 
 from .rule import Rule
@@ -387,7 +387,7 @@ class DCFG:
 
     # Misc
 
-    def copy(self):
+    def copy(self) -> DCFG:
         """
         :return: A copy of the grammar.
         :rtype: DCFG
