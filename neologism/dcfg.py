@@ -27,17 +27,12 @@ class DCFG:
 
     @property
     def rules(self) -> typing.Set[Rule]:
-        """Returns
-        -------
-        rules : set of Rule
-            The rules, that define the grammar.
+        """
+        :return: The rules, that define the grammar.
+        :rtype: set[Rule]
 
-        See Also
-        --------
-        rules_containing : filter rules by symbol
+        .. seealso:: :func:`rules_containing`
 
-        Examples
-        --------
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
@@ -52,30 +47,19 @@ class DCFG:
         return rules
 
     def rules_containing(self, symbol: str) -> typing.Set[Rule]:
-        """Can be used to filter rules, that contain the given symbol
-        (terminal or non-terminal).
+        """
+        Can be used to filter rules, that contain the given symbol (terminal or nonterminal).
 
-        Parameters
-        ----------
-        symbol : str
-            The symbol, which the rules are filtered by.
+        :param symbol: The symbol, which the rules are filtered by.
+        :type symbol: str
 
-        Returns
-        -------
-        rules : set of Rule
-            The rules, that define the grammar and contain the given symbol.
+        :return: The rules, that define the grammar and contain the given symbol.
+        :rtype: set[Rule]
 
-        Raises
-        ------
-        TypeError
-            If symbol is not str.
+        :raise TypeError: If :attr:`symbol` is not an instance of :class:`str`.
 
-        See Also
-        --------
-        rules : get all rules
+        .. seealso:: :attr:`rules`
 
-        Examples
-        --------
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
@@ -95,23 +79,16 @@ class DCFG:
         return rules
 
     def add_rule(self, rule: Rule) -> None:
-        """Add a new rule to the grammar.
+        """
+        Add a new rule to the grammar.
 
-        The symbols in the rule will be automatically added if they are not
-        already in the grammar.
+        .. note:: The symbols in the rule will be automatically added if they are not already in the grammar.
 
-        Parameters
-        ----------
-        rule : Rule
-            The new rule to add.
+        :param rule: The new rule to add.
+        :type rule: Rule
 
-        Raises
-        ------
-        TypeError
-            If rule is not Rule.
+        :raise TypeError: If :attr:`rule` is not an instance of :class:`Rule`.
 
-        Examples
-        --------
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
@@ -130,29 +107,19 @@ class DCFG:
             self.__graph.add_edge(rule_id, symbol, index=index)
 
     def remove_rule(self, rule: Rule) -> None:
-        """Remove a rule from the grammar.
+        """
+        Remove a rule from the grammar.
 
-        If there are symbols that are not used by any rule after the removal,
-        they are not removed.
+        .. note:: If there are symbols that are not used by any rule after the removal, they are not removed.
 
-        Parameters
-        ----------
-        rule : Rule
-            The rule to remove.
+        :param rule: The rule to remove.
+        :type rule: Rule
 
-        Raises
-        ------
-        TypeError
-            If rule is not Rule.
-        ValueError
-            If rule is not in the rules of the grammar.
+        :raise TypeError: If :attr:`rule` is not an instance of :class:`Rule`.
+        :raise ValueError: If :attr:`rule` is not in the rules of the grammar.
 
-        See Also
-        --------
-        ??? : clean up unused symbols, etc...
+        .. seealso:: ??? # clean up unused symbols, etc...
 
-        Examples
-        --------
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
@@ -182,19 +149,14 @@ class DCFG:
 
     @property
     def symbols(self) -> typing.Set[str]:
-        """Returns
-        -------
-        symbols : set of str
-            The symbols that are defined in the grammar.
-            It is possible for a symbol to not be used by any of the rules.
+        """
+        :getter: The symbols that are defined in the grammar.
+        :type: set[str]
 
-        See Also
-        --------
-        terminals, nonterminals
-        ??? : clean up unused symbols, etc...
+        .. note:: It is possible for a symbol to not be used by any of the rules.
 
-        Examples
-        --------
+        .. seealso:: :attr:`terminals`, :attr:`nonterminals`, ??? : clean up unused symbols, etc...
+
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
@@ -205,19 +167,15 @@ class DCFG:
 
     @property
     def terminals(self) -> typing.Set[str]:
-        """Returns
-        -------
-        terminals : set of str
-            The terminals that are defined in the grammar.
-            It is possible for a terminal to not be used by any of the rules.
+        """
+        :getter: The terminals that are defined in the grammar.
+        :type: set[str]
 
-        See Also
-        --------
-        symbols, nonterminals, is_symbol_terminal, make_symbol_terminal
-        ??? : clean up unused symbols, etc...
+        .. note:: It is possible for a terminal to not be used by any of the rules.
 
-        Examples
-        --------
+        .. seealso:: :attr:`symbols`, :attr:`nonterminals`, :func:`is_symbol_terminal`, :func:`make_symbol_terminal`,
+                     ??? : clean up unused symbols, etc...
+
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
@@ -229,19 +187,15 @@ class DCFG:
 
     @property
     def nonterminals(self) -> typing.Set[str]:
-        """Returns
-        -------
-        nonterminals : set of str
-            The non-terminals that are defined in the grammar.
-            It is possible for a non-terminal to not be used by any of the rules.
+        """
+        :getter: The nonterminals that are defined in the grammar.
+        :type: set[str]
 
-        See Also
-        --------
-        symbols, terminals, is_symbol_terminal, make_symbol_terminal
-        ??? : clean up unused symbols, etc...
+        .. note:: It is possible for a nonterminal to not be used by any of the rules.
 
-        Examples
-        --------
+        .. seealso:: :attr:`symbols`, :attr:`terminals`, :func:`is_symbol_terminal`, :func:`make_symbol_terminal`,
+                     ??? : clean up unused symbols, etc...
+
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
@@ -252,29 +206,19 @@ class DCFG:
         return set(filter(lambda node: isinstance(node, str) and not self.is_symbol_terminal(node), self.__graph.nodes))
 
     def remove_symbol(self, symbol: str) -> None:
-        """Remove a symbol from the grammar.
+        """
+        Removes a symbol from the grammar.
 
-        If the symbol was used by a rule, it will be removed from the
-        rule, too.
+        :param symbol: Symbol to remove.
+        :type symbol: str
 
-        Parameters
-        ----------
-        symbol : str
-            Symbol to remove.
+        :raise TypeError: If :attr:`symbol` is not an instance of :class:`str`.
+        :raise ValueError: If :attr:`symbol` was not in the grammar.
 
-        Raises
-        ------
-        TypeError
-            If symbol is not str.
-        ValueError
-            If symbol was not in the grammar.
+        .. note:: If :attr:`symbol` was used by a rule in the grammar, it will be removed from the rule, too.
 
-        See Also
-        --------
-        symbols
+        .. seealso:: :attr:`symbols`
 
-        Examples
-        --------
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.rules
@@ -296,26 +240,17 @@ class DCFG:
             raise ValueError("{} not in symbols".format(symbol))
 
     def is_symbol_terminal(self, symbol: str):
-        """Checks whether a symbol is terminal in the grammar.
+        """
+        Checks whether a symbol is terminal in the grammar.
 
-        Parameters
-        ----------
-        symbol : str
-            Symbol to check.
+        :param symbol: The symbol to check.
+        :type symbol: str
 
-        Raises
-        ------
-        TypeError
-            If symbol is not str.
-        ValueError
-            If symbol was not in the grammar.
+        :raise TypeError: If :attr:`symbol` is not an instance of :class:`str`.
+        :raise ValueError: If :attr:`symbol` was not in the grammar.
 
-        See Also
-        --------
-        symbols, terminals, nonterminals, make_symbol_terminal
+        .. seealso:: :attr:`symbols`, :attr:`terminals`, :attr:`nonterminals`, :func:`make_symbol_terminal`
 
-        Examples
-        --------
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
@@ -336,30 +271,21 @@ class DCFG:
             raise ValueError("{} not in symbols".format(symbol))
 
     def make_symbol_terminal(self, symbol: str) -> None:
-        """Make a symbol terminal in the grammar.
+        """
+        Make a symbol terminal in the grammar.
 
-        Rules that expanded the previously non-terminal symbol are removed.
-        If there are symbols that are not used by any rule after the
-        operation, they are not removed.
+        .. note: Rules that expanded the previously nonterminal symbol are removed.
+        .. note: If there are symbols that are not used by any rule after the operation, they are not removed.
 
-        Parameters
-        ----------
-        symbol : str
-            Symbol to be made terminal.
 
-        Raises
-        ------
-        TypeError
-            If symbol is not str.
-        ValueError
-            If symbol was not in the grammar.
+        :param symbol: The symbol to be made terminal.
+        :type symbol: str
 
-        See Also
-        --------
-        symbols, terminals, nonterminals, is_symbol_terminal
+        :raise TypeError: If :attr:`symbol` is not an instance of :class:`str`.
+        :raise ValueError: If :attr:`symbol` was not in the grammar.
 
-        Examples
-        --------
+        .. seealso:: :attr:`symbols`, :attr:`terminals`, :attr:`nonterminals`, :func:`is_symbol_terminal`
+
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
@@ -385,9 +311,14 @@ class DCFG:
 
     @property
     def start_symbol(self) -> str:
-        """Start symbol. Needed for forming sentences.
+        """
+        :getter: Returns the start symbol.
+        :setter: Sets the start symbol.
+        :type: str
 
-        If it is not explicitly, the first added rule's lhs is used.
+        .. note:: If it is not explicitly, the first added rule's :attr:`lhs` is used.
+
+        .. seealso:: :attr:`sentences`
         """
         if self.__start_symbol is None or self.__start_symbol not in self.symbols:
             if len(self.__rule_ids) != 0:
@@ -409,7 +340,11 @@ class DCFG:
 
     # Sentences
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
+        """
+        :return: Returns whether there is at least one loop in the resolutions of the nonterminals.
+        :rtype: bool
+        """
         if self.start_symbol is None:
             return True
 
@@ -417,15 +352,15 @@ class DCFG:
 
     @property
     def sentences(self) -> typing.Set[tuple]:
-        """Returns
-        -------
-        sentences: list of Sentence == list of list of str
-            All possible sentences of the grammar. If the grammar is not
-            finite, sentences are generated from a copy of the grammar,
-            which has been made finite.
+        """
+        :getter: Returns all possible sentences of the grammar, starting with :attr:`start_symbol`.
+        :type: set[tuple]
 
-        Examples
-        --------
+        .. note:: If the grammar is not finite, sentences are generated from a copy of the grammar,
+                  which has been made finite.
+
+        .. seealso:: :func:`is_finite`, :attr:`start_symbol`
+
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
@@ -453,7 +388,10 @@ class DCFG:
     # Misc
 
     def copy(self):
-        """Returns a copy of the grammar."""
+        """
+        :return: A copy of the grammar.
+        :rtype: DCFG
+        """
         copied = DCFG()
         copied.__graph = self.__graph.copy()  # Shallow copy, but we do not store containers, so it is okay
         copied.__next_rule_id = self.__next_rule_id
@@ -462,19 +400,15 @@ class DCFG:
         return copied
 
     def load_yacc_file(self, file_path: str) -> None:
-        """Load rules from a yacc file.
+        """
+        Loads rules from a yacc file.
 
-        Using this function needs bison to be installed and be on PATH.
+        .. note:: Using this function needs ``bison`` to be installed and be on ``PATH``.
 
-        Parameters
-        ----------
-        file_path : str
-            The file path of the yacc file.
+        :param file_path: The path of the yacc file.
+        :type file_path: str
 
-        Raises
-        ------
-        ???
-            If bison is not available on the system.
+        :raise ???: If ``bison`` is not available on the system.
         """
         rules = yacc_parse(file_path)
 
