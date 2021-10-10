@@ -15,8 +15,10 @@ Rule
 
 from .dcfg import DCFG
 from .rule import Rule
+from .yacc import YaccDecodeError
 
 __all__ = [
     "DCFG",
     "Rule",
+    "YaccDecodeError",
 ]
