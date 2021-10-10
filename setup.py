@@ -14,6 +14,10 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/alltilla/neologism",
+    project_urls={
+        "Bug Tracker": "https://github.com/alltilla/neologism/issues",
+        "Documentation": "https://neologism.readthedocs.io/",
+    },
     packages=setuptools.find_packages(include=["neologism"]),
     classifiers=[
         "Programming Language :: Python :: 3",
