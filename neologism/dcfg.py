@@ -235,10 +235,7 @@ class DCFG:
         utils.raise_type_error_if_not_type_of(symbol, str)
 
         self.make_symbol_terminal(symbol)
-        try:
-            self.__graph.remove_node(symbol)
-        except networkx.NetworkXError:
-            raise ValueError("{} not in symbols".format(symbol))
+        self.__graph.remove_node(symbol)
 
     def is_symbol_terminal(self, symbol: str):
         """
@@ -370,7 +367,7 @@ class DCFG:
         {('b', 'x', 'y', 'z', 'd'), ('b', '1', '2', '3', 'd')}
         """
         if self.start_symbol is None:
-            return []
+            return set()
 
         dcfg = self
 

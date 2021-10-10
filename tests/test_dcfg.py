@@ -8,7 +8,7 @@ from neologism import Rule
 @pytest.fixture
 def dcfg() -> DCFG:
     rules = [
-        Rule("start", ("NT_1",)),
+        Rule("NT_start", ("NT_1",)),
         Rule("NT_1", ("t_1", "t_2", "t_2")),
         Rule("NT_1", ("t_3", "t_4", "NT_1")),
         Rule("NT_1", ("t_5", "NT_2")),
@@ -35,7 +35,7 @@ def test_load_yacc_file():
         %token t_6
         %token t_7
         %%
-        start
+        NT_start
             : NT_1
             ;
         NT_1
@@ -62,7 +62,7 @@ def test_load_yacc_file():
 
     expected_symbols = {
         "$accept",
-        "start",
+        "NT_start",
         "NT_1",
         "NT_2",
         "t_1",
@@ -75,8 +75,8 @@ def test_load_yacc_file():
     }
 
     expected_rules = {
-        Rule("$accept", ("start",)),
-        Rule("start", ("NT_1",)),
+        Rule("$accept", ("NT_start",)),
+        Rule("NT_start", ("NT_1",)),
         Rule("NT_1", ("t_1", "t_2", "t_2")),
         Rule("NT_1", ("t_3", "t_4", "NT_1")),
         Rule("NT_1", ("t_5", "NT_2")),
@@ -90,9 +90,9 @@ def test_load_yacc_file():
     assert dcfg.start_symbol == "$accept"
 
 
-def test_get_all_symbols(dcfg: DCFG):
+def test_symbols_getter(dcfg: DCFG):
     expected = {
-        "start",
+        "NT_start",
         "NT_1",
         "NT_2",
         "t_1",
@@ -106,9 +106,31 @@ def test_get_all_symbols(dcfg: DCFG):
     assert dcfg.symbols == expected
 
 
+def test_terminals_getter(dcfg: DCFG):
+    expected = {
+        "t_1",
+        "t_2",
+        "t_3",
+        "t_4",
+        "t_5",
+        "t_6",
+        "t_7",
+    }
+    assert dcfg.terminals == expected
+
+
+def test_nonterminals_getter(dcfg: DCFG):
+    expected = {
+        "NT_start",
+        "NT_1",
+        "NT_2",
+    }
+    assert dcfg.nonterminals == expected
+
+
 def test_rules_getter(dcfg: DCFG):
     expected = {
-        Rule("start", ("NT_1",)),
+        Rule("NT_start", ("NT_1",)),
         Rule("NT_1", ("t_1", "t_2", "t_2")),
         Rule("NT_1", ("t_3", "t_4", "NT_1")),
         Rule("NT_1", ("t_5", "NT_2")),
@@ -121,7 +143,7 @@ def test_rules_getter(dcfg: DCFG):
 
 def test_rules_containing(dcfg: DCFG):
     expected = {
-        Rule("start", ("NT_1",)),
+        Rule("NT_start", ("NT_1",)),
         Rule("NT_1", ("t_1", "t_2", "t_2")),
         Rule("NT_1", ("t_3", "t_4", "NT_1")),
         Rule("NT_1", ("t_5", "NT_2")),
@@ -141,9 +163,17 @@ def test_private_rule_exists(dcfg: DCFG):
     assert not dcfg._DCFG__rule_exists(Rule("NT_1", ("foo",)))
 
 
+def test_add_rule_existing(dcfg: DCFG):
+    rules = dcfg.rules
+
+    dcfg.add_rule(Rule("NT_1", ("t_3", "t_4", "NT_1")))
+
+    assert dcfg.rules == rules
+
+
 def test_remove_rule(dcfg: DCFG):
     expected = {
-        Rule("start", ("NT_1",)),
+        Rule("NT_start", ("NT_1",)),
         Rule("NT_1", ("t_1", "t_2", "t_2")),
         Rule("NT_1", ("t_3", "t_4", "NT_1")),
         Rule("NT_1", ()),
@@ -163,7 +193,7 @@ def test_remove_rule_not_present(dcfg: DCFG):
 
 def test_remove_symbol(dcfg: DCFG):
     expected_symbols = {
-        "start",
+        "NT_start",
         "NT_1",
         "t_1",
         "t_2",
@@ -174,7 +204,7 @@ def test_remove_symbol(dcfg: DCFG):
         "t_7",
     }
     expected_rules = {
-        Rule("start", ("NT_1",)),
+        Rule("NT_start", ("NT_1",)),
         Rule("NT_1", ("t_1", "t_2", "t_2")),
         Rule("NT_1", ("t_3", "t_4", "NT_1")),
         Rule("NT_1", ("t_5",)),
@@ -194,7 +224,7 @@ def test_remove_symbol_not_present(dcfg: DCFG):
 
 def test_make_symbol_terminal(dcfg: DCFG):
     expected_symbols = {
-        "start",
+        "NT_start",
         "NT_1",
         "NT_2",
         "t_1",
@@ -206,7 +236,7 @@ def test_make_symbol_terminal(dcfg: DCFG):
         "t_7",
     }
     expected_rules = {
-        Rule("start", ("NT_1",)),
+        Rule("NT_start", ("NT_1",)),
         Rule("NT_2", ("t_6",)),
         Rule("NT_2", ("t_7",)),
     }
@@ -227,12 +257,27 @@ def test_is_symbol_terminal(dcfg: DCFG):
     assert dcfg.is_symbol_terminal("t_1")
 
 
-def test_start_symbol(dcfg: DCFG):
+def test_is_symbol_terminal_not_present(dcfg: DCFG):
+    with pytest.raises(ValueError):
+        assert dcfg.is_symbol_terminal("NT_99")
+
+
+def test_start_symbol_getter():
+    dcfg = DCFG()
+    assert dcfg.start_symbol == None
+
+    rule = Rule("NT_start", ("t_1", "t_2"))
+
+    dcfg.add_rule(rule)
+    assert dcfg.start_symbol == "NT_start"
+
+
+def test_start_symbol_setter(dcfg: DCFG):
     dcfg.start_symbol = "NT_1"
     assert dcfg.start_symbol == "NT_1"
 
 
-def test_start_symbol_not_present(dcfg: DCFG):
+def test_start_symbol_setter_not_present(dcfg: DCFG):
     with pytest.raises(ValueError):
         dcfg.start_symbol = "NT_99"
 
@@ -246,7 +291,12 @@ def test_is_finite_true(dcfg: DCFG):
     assert dcfg.is_finite()
 
 
-def test_get_all_sentences(dcfg: DCFG):
+def test_is_finite_empty_grammar():
+    dcfg = DCFG()
+    assert dcfg.is_finite()
+
+
+def test_sentences_getter(dcfg: DCFG):
     expected = {
         ("t_1", "t_2", "t_2"),
         ("t_3", "t_4"),
@@ -256,6 +306,11 @@ def test_get_all_sentences(dcfg: DCFG):
     }
 
     assert dcfg.sentences == expected
+
+
+def test_sentences_getter_empty_grammar():
+    dcfg = DCFG()
+    assert dcfg.sentences == set()
 
 
 def test_copy(dcfg: DCFG):
