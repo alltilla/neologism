@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as xml_parser
+from os import environ
 from subprocess import DEVNULL, Popen
 from tempfile import NamedTemporaryFile
 
@@ -19,7 +20,7 @@ def __yacc2xml(yacc_file_path: str):
         if not __run_in_shell(["bison", "--xml=" + xml_file.name, "--output=/dev/null", yacc_file_path]):
             raise Exception("Failed to convert to xml:\n{}\n".format(yacc_file_path))
     except FileNotFoundError:
-        raise ChildProcessError("bison executable not found")
+        raise ChildProcessError("bison executable not found. PATH: {}".format(environ.get("PATH", "")))
 
     return xml_file
 
