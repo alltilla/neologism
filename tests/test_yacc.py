@@ -1,8 +1,9 @@
+from os import environ
 from tempfile import NamedTemporaryFile
-import pytest
 
-from neologism.yacc import parse, YaccDecodeError
+import pytest
 from neologism import Rule
+from neologism.yacc import YaccDecodeError, parse
 
 
 def __create_temp_file_with_content(content):
@@ -49,6 +50,11 @@ def test_failed_parse():
     with pytest.raises(YaccDecodeError):
         yacc_file = __create_temp_file_with_content("invalid yacc string")
         parse(yacc_file.name)
+
+
+def test_no_bison(yacc_file):
+    with pytest.raises(ChildProcessError):
+        parse(yacc_file.name, custom_path="")
 
 
 def test_parse_yacc(yacc_file):

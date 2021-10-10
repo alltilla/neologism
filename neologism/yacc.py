@@ -10,18 +10,22 @@ class YaccDecodeError(Exception):
     pass
 
 
-def __run_in_shell(command: list):
-    proc = Popen(command, stderr=DEVNULL, stdout=DEVNULL)
+def __run_in_shell(command: list, custom_path: str = None):
+    env = environ.copy()
+    if custom_path is not None:
+        env["PATH"] = custom_path
+
+    proc = Popen(command, stderr=DEVNULL, stdout=DEVNULL, env=env)
     proc.wait()
 
     return proc.returncode == 0
 
 
-def __yacc2xml(yacc_file_path: str):
+def __yacc2xml(yacc_file_path: str, custom_path: str = None):
     xml_file = NamedTemporaryFile()
 
     try:
-        if not __run_in_shell(["bison", "--xml=" + xml_file.name, "--output=/dev/null", yacc_file_path]):
+        if not __run_in_shell(["bison", "--xml=" + xml_file.name, "--output=/dev/null", yacc_file_path], custom_path):
             raise YaccDecodeError("Failed to parse yacc file: {}".format(yacc_file_path))
     except FileNotFoundError:
         raise ChildProcessError("bison executable not found. PATH: {}".format(environ.get("PATH", "")))
@@ -41,5 +45,5 @@ def __xml2rules(xml_file):
     return rules
 
 
-def parse(file_path: str):
-    return __xml2rules(__yacc2xml(file_path))
+def parse(file_path: str, custom_path: str = None):
+    return __xml2rules(__yacc2xml(file_path, custom_path))
