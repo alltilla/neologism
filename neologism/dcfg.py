@@ -1,13 +1,14 @@
 from __future__ import annotations
+
 import typing
+
 import networkx
 
+from . import utils
 from .rule import Rule
 from .yacc import parse as yacc_parse
-from . import utils
 
 Clause = typing.List[str]  # Part of a sentence
-Sentence = Clause
 
 
 class RuleId(int):
