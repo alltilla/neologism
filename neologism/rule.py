@@ -5,6 +5,7 @@ class Rule:
     """
 
     def __init__(self, lhs: str, rhs: tuple) -> None:
+        #  TODO: assert rhs is list or tuple
         self.__lhs = lhs
         self.__rhs = tuple(rhs)
 

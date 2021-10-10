@@ -2,5 +2,4 @@ dist
 *.egg-info
 *__pycache__
 docs/build/
-docs/source/modules.rst
-docs/source/neologism.rst
+docs/source/generated
