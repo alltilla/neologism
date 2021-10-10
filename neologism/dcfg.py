@@ -38,7 +38,7 @@ class DCFG:
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
         >>> dcfg.rules
-        {Rule(lhs='c', rhs=('x', 'y', 'z')), Rule(lhs='a', rhs=('b', 'c', 'd'))}
+        {Rule('c' => 'x' 'y' 'z'), Rule('a' => 'b' 'c' 'd')}
         """
         rules = set()
 
@@ -65,9 +65,9 @@ class DCFG:
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
         >>> dcfg.rules_containing("d")
-        {Rule(lhs='a', rhs=('b', 'c', 'd'))}
+        {Rule('a' => 'b' 'c' 'd')}
         >>> dcfg.rules_containing("c")
-        {Rule(lhs='c', rhs=('x', 'y', 'z')), Rule(lhs='a', rhs=('b', 'c', 'd'))}
+        {Rule('c' => 'x' 'y' 'z'), Rule('a' => 'b' 'c' 'd')}
         """
         utils.raise_type_error_if_not_type_of(symbol, str)
 
@@ -94,7 +94,7 @@ class DCFG:
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
         >>> dcfg.rules
-        {Rule(lhs='c', rhs=('x', 'y', 'z')), Rule(lhs='a', rhs=('b', 'c', 'd'))}
+        {Rule('c' => 'x' 'y' 'z'), Rule('a' => 'b' 'c' 'd')}
         """
         utils.raise_type_error_if_not_type_of(rule, Rule)
 
@@ -125,12 +125,12 @@ class DCFG:
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
         >>> dcfg.rules
-        {Rule(lhs='c', rhs=('x', 'y', 'z')), Rule(lhs='a', rhs=('b', 'c', 'd'))}
+        {Rule('c' => 'x' 'y' 'z'), Rule('a' => 'b' 'c' 'd')}
         >>> dcfg.symbols
         {'y', 'a', 'x', 'b', 'c', 'd', 'z'}
         >>> dcfg.remove_rule(Rule("c", ("x", "y", "z")))
         >>> dcfg.rules
-        {Rule(lhs='a', rhs=('b', 'c', 'd'))}
+        {Rule('a' => 'b' 'c' 'd')}
         >>> dcfg.symbols
         {'y', 'a', 'x', 'b', 'c', 'd', 'z'}
         """
@@ -223,12 +223,12 @@ class DCFG:
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.rules
-        {Rule(lhs='a', rhs=('b', 'c', 'd'))}
+        {Rule('a' => 'b' 'c' 'd')}
         >>> dcfg.symbols
         {'d', 'a', 'c', 'b'}
         >>> dcfg.remove_symbol("c")
         >>> dcfg.rules
-        {Rule(lhs='a', rhs=('b', 'd'))}
+        {Rule('a' => 'b' 'd')}
         >>> dcfg.symbols
         {'d', 'a', 'b'}
         """
@@ -291,12 +291,12 @@ class DCFG:
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
         >>> dcfg.rules
-        {Rule(lhs='c', rhs=('x', 'y', 'z')), Rule(lhs='a', rhs=('b', 'c', 'd'))}
+        {Rule('c' => 'x' 'y' 'z'), Rule('a' => 'b' 'c' 'd')}
         >>> dcfg.symbols
         {'y', 'a', 'x', 'b', 'c', 'd', 'z'}
         >>> dcfg.make_symbol_terminal("c")
         >>> dcfg.rules
-        {Rule(lhs='a', rhs=('b', 'c', 'd'))}
+        {Rule('a' => 'b' 'c' 'd')}
         >>> dcfg.symbols
         {'y', 'a', 'x', 'b', 'c', 'd', 'z'}
         """

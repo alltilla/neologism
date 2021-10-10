@@ -53,3 +53,9 @@ def test_hash():
     s.add(rule2)
 
     assert len(s) == 1
+
+
+def test_repr():
+    rule = Rule("symbol1", ("symbol2", "symbol3"))
+
+    assert repr(rule) == "Rule('symbol1' => 'symbol2' 'symbol3')"

@@ -18,7 +18,7 @@ class Rule:
         return self.__rhs
 
     def __repr__(self) -> str:
-        return "Rule(lhs={}, rhs={})".format(repr(self.lhs), repr(self.rhs))
+        return "Rule({} => {})".format(repr(self.lhs), " ".join([repr(symbol) for symbol in self.rhs]))
 
     def __eq__(self, other) -> bool:
         return self.lhs == other.lhs and self.rhs == other.rhs
