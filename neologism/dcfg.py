@@ -111,15 +111,13 @@ class DCFG:
         """
         Remove a rule from the grammar.
 
-        .. note:: If there are symbols that are not used by any rule after the removal, they are not removed.
+        .. note:: If there are symbols that are not used by any rule after the removal, they are removed.
 
         :param rule: The rule to remove.
         :type rule: Rule
 
         :raise TypeError: If :attr:`rule` is not an instance of :class:`Rule`.
         :raise ValueError: If :attr:`rule` is not in the rules of the grammar.
-
-        .. seealso:: ??? # clean up unused symbols, etc...
 
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
@@ -141,12 +139,11 @@ class DCFG:
 
         for rule_id in possible_rule_ids:
             if self.__get_rhs_by_rule_id(rule_id) == rule.rhs:
-                self.__graph.remove_node(rule_id)
                 rule_found = True
+                self.__remove_rule_by_id(rule_id)
 
         if not rule_found:
             raise ValueError("{} not in rules".format(rule))
-        # TODO: add cleanup fn for dangling symbols, rules, etc...
 
     @property
     def symbols(self) -> typing.Set[str]:
@@ -503,3 +500,15 @@ class DCFG:
             expansions.extend(self.__expand_rhs_of_rule_by_id(rule_id))
 
         return expansions
+
+    def __remove_rule_by_id(self, rule_id: RuleId) -> None:
+        related_symbols = set()
+        related_symbols.add(self.__get_lhs_by_rule_id(rule_id))
+        for symbol in self.__get_rhs_by_rule_id(rule_id):
+            related_symbols.add(symbol)
+
+        self.__graph.remove_node(rule_id)
+
+        for symbol in related_symbols:
+            if len(list(self.__graph.predecessors(symbol))) == 0 and len(list(self.__graph.successors(symbol))) == 0:
+                self.__graph.remove_node(symbol)

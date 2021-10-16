@@ -172,7 +172,18 @@ def test_add_rule_existing(dcfg: DCFG):
 
 
 def test_remove_rule(dcfg: DCFG):
-    expected = {
+    expected_symbols = {
+        "NT_start",
+        "NT_1",
+        "NT_2",
+        "t_1",
+        "t_2",
+        "t_3",
+        "t_4",
+        "t_6",
+        "t_7",
+    }
+    expected_rules = {
         Rule("NT_start", ("NT_1",)),
         Rule("NT_1", ("t_1", "t_2", "t_2")),
         Rule("NT_1", ("t_3", "t_4", "NT_1")),
@@ -183,7 +194,8 @@ def test_remove_rule(dcfg: DCFG):
 
     dcfg.remove_rule(Rule("NT_1", ("t_5", "NT_2")))
 
-    assert dcfg.rules == expected
+    assert dcfg.rules == expected_rules
+    assert dcfg.symbols == expected_symbols
 
 
 def test_remove_rule_not_present(dcfg: DCFG):
@@ -270,6 +282,9 @@ def test_start_symbol_getter():
 
     dcfg.add_rule(rule)
     assert dcfg.start_symbol == "NT_start"
+
+    dcfg.remove_rule(rule)
+    assert dcfg.start_symbol == None
 
 
 def test_start_symbol_setter(dcfg: DCFG):
