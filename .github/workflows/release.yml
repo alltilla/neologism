@@ -14,6 +14,9 @@ jobs:
     container:
       image: python:3
 
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
       - name: Checkout source
         uses: actions/checkout@v2
@@ -46,3 +49,14 @@ jobs:
         if: github.event.inputs.use_test_registry == 'false'
         run: |
           twine upload dist/* -u __token__ -p ${{ secrets.PYPI_API_TOKEN }}
+
+      - name: Publish GitHub Release
+        if: github.event.inputs.use_test_registry == 'false'
+        run: |
+          VERSION=$(cat VERSION | tr -d "\n")
+          echo ${VERSION} > /tmp/message
+
+          hub release create \
+            --file /tmp/message \
+            --attach dist/neologism-${VERSION}.tar.gz \
+            ${VERSION}
