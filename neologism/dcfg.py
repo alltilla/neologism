@@ -214,6 +214,9 @@ class DCFG:
         :raise ValueError: If :attr:`symbol` was not in the grammar.
 
         .. note:: If :attr:`symbol` was used by a rule in the grammar, it will be removed from the rule, too.
+        .. note:: If :attr:`symbol` was a nonterminal, the rules which have :attr:`symbol`
+                  as their :attr:`lhs` are also removed.
+        .. note:: If there are symbols that are not used by any rule after the removal, they are removed.
 
         .. seealso:: :attr:`symbols`
 
@@ -302,7 +305,7 @@ class DCFG:
             raise ValueError("{} not in symbols".format(symbol))
 
         for rule_id in rule_ids:
-            self.__graph.remove_node(rule_id)
+            self.__remove_rule_by_id(rule_id)
 
     @property
     def start_symbol(self) -> str:
