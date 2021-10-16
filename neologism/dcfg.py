@@ -237,7 +237,7 @@ class DCFG:
         self.make_symbol_terminal(symbol)
         self.__graph.remove_node(symbol)
 
-    def is_symbol_terminal(self, symbol: str):
+    def is_symbol_terminal(self, symbol: str) -> bool:
         """
         Checks whether a symbol is terminal in the grammar.
 
@@ -419,17 +419,17 @@ class DCFG:
     # Private functions
 
     @property
-    def __rule_ids(self):
+    def __rule_ids(self) -> typing.Set:
         return set(filter(lambda node: isinstance(node, RuleId), self.__graph.nodes))
 
-    def __get_next_rule_id(self):
+    def __get_next_rule_id(self) -> RuleId:
         next_rule_id = self.__next_rule_id
 
         self.__next_rule_id += 1
 
         return RuleId(next_rule_id)
 
-    def __rule_exists(self, rule: Rule):
+    def __rule_exists(self, rule: Rule) -> bool:
         assert isinstance(rule, Rule)
 
         try:
@@ -444,15 +444,18 @@ class DCFG:
 
         return False
 
-    def __get_lhs_by_rule_id(self, rule_id: RuleId):
+    def __get_lhs_by_rule_id(self, rule_id: RuleId) -> str:
         assert isinstance(rule_id, RuleId)
 
         lhss = list(self.__graph.predecessors(rule_id))
         assert len(lhss) == 1
 
-        return lhss[0]
+        lhs = lhss[0]
+        assert isinstance(lhs, str)
 
-    def __get_rhs_by_rule_id(self, rule_id: RuleId):
+        return lhs
+
+    def __get_rhs_by_rule_id(self, rule_id: RuleId) -> tuple:
         assert isinstance(rule_id, RuleId)
 
         symbols = []
@@ -465,7 +468,7 @@ class DCFG:
 
         return rhs
 
-    def __get_rule_by_id(self, rule_id: RuleId):
+    def __get_rule_by_id(self, rule_id: RuleId) -> Rule:
         assert isinstance(rule_id, RuleId)
 
         lhs = self.__get_lhs_by_rule_id(rule_id)
