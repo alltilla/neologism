@@ -1,13 +1,15 @@
 import setuptools
+from pathlib import Path
 
-with open("README.md", "r") as fh:
-    long_description = fh.read()
+ROOT_DIR = Path(__file__).parent.resolve()
 
+long_description = Path(ROOT_DIR, "README.md").read_text()
+version = Path(ROOT_DIR, "VERSION").read_text()
 requirements = ["networkx"]
 
 setuptools.setup(
     name="neologism",
-    version="0.0.3",
+    version=version,
     author="Attila Szakacs",
     author_email="szakacs.attila96@gmail.com",
     description="Dynamically modifiable context-free grammar written in python",

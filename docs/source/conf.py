@@ -1,12 +1,13 @@
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parents[2].resolve()))
+ROOT_DIR = Path(__file__).parents[2].resolve()
+sys.path.insert(0, str(ROOT_DIR))
 
 project = "neologism"
 copyright = "2021, Attila Szakacs"
 author = "Attila Szakacs"
-release = "0.0.3"
+release = Path(ROOT_DIR, "VERSION").read_text().rstrip()
 extensions = [
     "sphinx.ext.duration",
     "sphinx.ext.doctest",
