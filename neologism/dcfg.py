@@ -153,7 +153,7 @@ class DCFG:
 
         .. note:: It is possible for a symbol to not be used by any of the rules.
 
-        .. seealso:: :attr:`terminals`, :attr:`nonterminals`, ??? : clean up unused symbols, etc...
+        .. seealso:: :attr:`terminals`, :attr:`nonterminals`
 
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
@@ -171,8 +171,7 @@ class DCFG:
 
         .. note:: It is possible for a terminal to not be used by any of the rules.
 
-        .. seealso:: :attr:`symbols`, :attr:`nonterminals`, :func:`is_symbol_terminal`, :func:`make_symbol_terminal`,
-                     ??? : clean up unused symbols, etc...
+        .. seealso:: :attr:`symbols`, :attr:`nonterminals`, :func:`is_symbol_terminal`, :func:`make_symbol_terminal`
 
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
@@ -191,8 +190,7 @@ class DCFG:
 
         .. note:: It is possible for a nonterminal to not be used by any of the rules.
 
-        .. seealso:: :attr:`symbols`, :attr:`terminals`, :func:`is_symbol_terminal`, :func:`make_symbol_terminal`,
-                     ??? : clean up unused symbols, etc...
+        .. seealso:: :attr:`symbols`, :attr:`terminals`, :func:`is_symbol_terminal`, :func:`make_symbol_terminal`
 
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
