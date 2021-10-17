@@ -49,9 +49,9 @@ jobs:
         run: |
           if [ "${{ matrix.mode }}" = "installed" ]
           then
-            pytest --cov=neologism --import-mode=importlib
+            pytest --import-mode=importlib
           else
-            pytest --cov=neologism
+            pytest --cov=neologism --cov-fail-under=100
           fi
 
   style-check:
