@@ -152,8 +152,6 @@ class DCFG:
         :getter: The symbols that are defined in the grammar.
         :type: set[str]
 
-        .. note:: It is possible for a symbol to not be used by any of the rules.
-
         .. seealso:: :attr:`terminals`, :attr:`nonterminals`
 
         >>> dcfg = DCFG()
@@ -313,7 +311,7 @@ class DCFG:
         :setter: Sets the start symbol.
         :type: str
 
-        .. note:: If it is not explicitly, the first added rule's :attr:`lhs` is used.
+        .. note:: If it is not explicitly set, the first added rule's :attr:`lhs` is used.
 
         .. seealso:: :attr:`sentences`
         """
