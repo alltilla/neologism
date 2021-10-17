@@ -90,6 +90,28 @@ def test_load_yacc_file():
     assert dcfg.start_symbol == "$accept"
 
 
+def test_load_dcfg(dcfg: DCFG):
+    new_rule = Rule("NT_start", ("t_other_1", "t_other_2"))
+
+    expected_rules = {
+        Rule("NT_start", ("NT_1",)),
+        Rule("NT_1", ("t_1", "t_2", "t_2")),
+        Rule("NT_1", ("t_3", "t_4", "NT_1")),
+        Rule("NT_1", ("t_5", "NT_2")),
+        Rule("NT_1", ()),
+        Rule("NT_2", ("t_6",)),
+        Rule("NT_2", ("t_7",)),
+        new_rule,
+    }
+
+    other = DCFG()
+    other.add_rule(new_rule)
+
+    dcfg.load_dcfg(other)
+
+    assert dcfg.rules == expected_rules
+
+
 def test_symbols_getter(dcfg: DCFG):
     expected = {
         "NT_start",

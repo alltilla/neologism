@@ -414,6 +414,16 @@ class DCFG:
         self.remove_symbol("$end")
         self.start_symbol = "$accept"
 
+    def load_dcfg(self, dcfg: DCFG) -> None:
+        """
+        Loads rules from another DCFG.
+
+        :param dcfg: The other :class:`DCFG` instance to load the rules from.
+        :type dcfg: DCFG
+        """
+        for rule in dcfg.rules:
+            self.add_rule(rule)
+
     # Private functions
 
     @property
