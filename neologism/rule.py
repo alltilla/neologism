@@ -1,11 +1,15 @@
+from . import utils
+import typing
+
+
 class Rule:
     """A class that is used to create and modify the context-free grammar.
 
     The API uses str for symbols.
     """
 
-    def __init__(self, lhs: str, rhs: tuple) -> None:
-        #  TODO: assert rhs is list or tuple
+    def __init__(self, lhs: str, rhs: typing.Union[tuple, list]) -> None:
+        utils.raise_type_error_if_not_type_of_multiple(rhs, [tuple, list])
         self.__lhs = lhs
         self.__rhs = tuple(rhs)
 

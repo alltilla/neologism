@@ -20,6 +20,13 @@ def test_constructor_with_rhs_as_list():
     assert rule.rhs == tuple(rhs)
 
 
+def test_constructor_with_unsupported_rhs():
+    lhs = "symbol1"
+    rhs = "symbol2"
+    with pytest.raises(TypeError):
+        Rule(lhs, rhs)
+
+
 def test_immutability():
     lhs = "symbol1"
     rhs = ["symbol2", "symbol3"]
