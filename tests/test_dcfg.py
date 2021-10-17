@@ -220,6 +220,25 @@ def test_remove_rule(dcfg: DCFG):
     assert dcfg.symbols == expected_symbols
 
 
+def test_remove_rule_unreachable():
+    expected_rules = {
+        Rule("NT_start", ("t_1", "t_2")),
+    }
+    expected_symbols = {
+        "NT_start",
+        "t_1",
+        "t_2",
+    }
+
+    dcfg = DCFG()
+    dcfg.add_rule(Rule("NT_start", ("t_1", "t_2")))
+    dcfg.add_rule(Rule("NT_unreachable", ("t_3", "t_4")))
+    dcfg.remove_rule(Rule("NT_unreachable", ("t_3", "t_4")))
+
+    assert dcfg.rules == expected_rules
+    assert dcfg.symbols == expected_symbols
+
+
 def test_remove_rule_not_present(dcfg: DCFG):
     with pytest.raises(ValueError):
         dcfg.remove_rule(Rule("NT_2", ()))
