@@ -3,9 +3,12 @@ import typing
 
 
 class Rule:
-    """A class that is used to create and modify the context-free grammar.
+    """
+    A class that is used to create and modify the :class:`DCFG`.
 
-    The API uses str for symbols.
+    The API uses :class:`str` for symbols.
+
+    :class:`Rule` is immutable, hashable and has its equivalence implemented.
     """
 
     def __init__(self, lhs: str, rhs: typing.Union[tuple, list]) -> None:
@@ -15,10 +18,18 @@ class Rule:
 
     @property
     def lhs(self) -> str:
+        """
+        :getter: Left hand side.
+        :type: str
+        """
         return self.__lhs
 
     @property
-    def rhs(self) -> tuple:
+    def rhs(self) -> typing.Tuple[str]:
+        """
+        :getter: Right hand side.
+        :type: tuple[str]
+        """
         return self.__rhs
 
     def __repr__(self) -> str:
