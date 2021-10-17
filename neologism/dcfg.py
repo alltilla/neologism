@@ -131,7 +131,7 @@ class DCFG:
         >>> dcfg.rules
         {Rule('a' => 'b' 'c' 'd')}
         >>> dcfg.symbols
-        {'y', 'a', 'x', 'b', 'c', 'd', 'z'}
+        {'a', 'b', 'c', 'd'}
         """
         utils.raise_type_error_if_not_type_of(rule, Rule)
 
@@ -272,7 +272,6 @@ class DCFG:
         .. note: Rules that expanded the previously nonterminal symbol are removed.
         .. note: If there are symbols that are not used by any rule after the operation, they are not removed.
 
-
         :param symbol: The symbol to be made terminal.
         :type symbol: str
 
@@ -292,7 +291,7 @@ class DCFG:
         >>> dcfg.rules
         {Rule('a' => 'b' 'c' 'd')}
         >>> dcfg.symbols
-        {'y', 'a', 'x', 'b', 'c', 'd', 'z'}
+        {'a', 'b', 'c', 'd'}
         """
         utils.raise_type_error_if_not_type_of(symbol, str)
 
