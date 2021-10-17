@@ -22,7 +22,6 @@ def raise_type_error_if_not_type_of_multiple(variable: typing.Any, types: typing
 
 
 def is_multidigraph_finite(graph: MultiDiGraph, start_node) -> bool:
-    # TODO: add unit test
     def __is_finite(_graph: MultiDiGraph, node, nodes_traversed: set):
         if node in nodes_traversed:
             return False
@@ -39,7 +38,6 @@ def is_multidigraph_finite(graph: MultiDiGraph, start_node) -> bool:
 
 
 def remove_loops_from_multidigraph(graph: MultiDiGraph, start_node) -> None:
-    # TODO: add unit test
     def __remove_loops(_graph: MultiDiGraph, node, nodes_traversed: set):
         nodes_traversed.add(node)
 
@@ -55,21 +53,21 @@ def remove_loops_from_multidigraph(graph: MultiDiGraph, start_node) -> None:
     __remove_loops(graph, start_node, set())
 
 
-def merge_expansions(expansions_of_each_symbol):
-    # TODO: add unit test
-    # TODO: generalize variables and function name
-    # TODO: add signature hint
-    clauses = [[]]
+def get_all_combinations(
+    possibilites_in_each_position: typing.List[typing.List[typing.List]],
+) -> typing.List[typing.List]:
 
-    for expansions_of_symbol in expansions_of_each_symbol:
-        clauses_orig_len = len(clauses)
-        for _ in range(len(expansions_of_symbol) - 1):
-            clauses.extend(copy.deepcopy(clauses[:clauses_orig_len]))
+    combinations = [[]]
 
-        clause_index = 0
-        for element in expansions_of_symbol:
-            for _ in range(clauses_orig_len):
-                clauses[clause_index].extend(element)
-                clause_index += 1
+    for possibilities_in_position in possibilites_in_each_position:
+        combinations_orig_len = len(combinations)
+        for _ in range(len(possibilities_in_position) - 1):
+            combinations.extend(copy.deepcopy(combinations[:combinations_orig_len]))
 
-    return clauses
+        idx = 0
+        for possibility in possibilities_in_position:
+            for _ in range(combinations_orig_len):
+                combinations[idx].extend(possibility)
+                idx += 1
+
+    return combinations

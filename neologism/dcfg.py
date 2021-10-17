@@ -492,7 +492,7 @@ class DCFG:
         for symbol in rhs:
             expansions_of_each_rhs_symbol.append(self.__expand_symbol(symbol))
 
-        return utils.merge_expansions(expansions_of_each_rhs_symbol)
+        return utils.get_all_combinations(expansions_of_each_rhs_symbol)
 
     def __expand_symbol(self, symbol: str) -> typing.List[Clause]:
         assert isinstance(symbol, str)
