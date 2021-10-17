@@ -16,9 +16,10 @@ class RuleId(int):
 
 
 class DCFG:
-    """A class that represents dynamically modifiable context-free grammar.
+    """
+    A class that represents dynamically modifiable context-free grammar.
 
-    The API uses str for symbols and Rule for rules.
+    The API uses :class:`str` for symbols and :class:`Rule` for rules.
     """
 
     def __init__(self):
