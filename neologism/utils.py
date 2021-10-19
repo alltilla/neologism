@@ -57,7 +57,7 @@ def get_all_combinations(
     possibilites_in_each_position: typing.List[typing.List[typing.List]],
 ) -> typing.List[typing.List]:
 
-    combinations = [[]]
+    combinations: typing.List[typing.List] = [[]]
 
     for possibilities_in_position in possibilites_in_each_position:
         combinations_orig_len = len(combinations)

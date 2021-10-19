@@ -181,8 +181,8 @@ def test_add_rule(dcfg: DCFG):
 
 
 def test_private_rule_exists(dcfg: DCFG):
-    assert dcfg._DCFG__rule_exists(Rule("NT_1", ("t_3", "t_4", "NT_1")))
-    assert not dcfg._DCFG__rule_exists(Rule("NT_1", ("foo",)))
+    assert dcfg._rule_exists(Rule("NT_1", ("t_3", "t_4", "NT_1")))
+    assert not dcfg._rule_exists(Rule("NT_1", ("foo",)))
 
 
 def test_add_rule_existing(dcfg: DCFG):

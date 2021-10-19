@@ -11,7 +11,7 @@ class Rule:
     :class:`Rule` is immutable, hashable and has its equivalence implemented.
     """
 
-    def __init__(self, lhs: str, rhs: typing.Union[tuple, list]) -> None:
+    def __init__(self, lhs: str, rhs: typing.Union[typing.Tuple[str, ...], list]) -> None:
         utils.raise_type_error_if_not_type_of_multiple(rhs, [tuple, list])
         self.__lhs = lhs
         self.__rhs = tuple(rhs)
@@ -25,7 +25,7 @@ class Rule:
         return self.__lhs
 
     @property
-    def rhs(self) -> typing.Tuple[str]:
+    def rhs(self) -> typing.Tuple[str, ...]:
         """
         :getter: Right hand side.
         :type: tuple[str]

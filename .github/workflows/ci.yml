@@ -72,6 +72,24 @@ jobs:
         run: |
           black --check --diff .
 
+  linter:
+    runs-on: ubuntu-latest
+
+    container:
+      image: python:3
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v2
+
+      - name: Setup environment
+        run: |
+          pip install pytest mypy
+
+      - name: mypy
+        run: |
+          mypy .
+
   doc-check:
     runs-on: ubuntu-latest
 

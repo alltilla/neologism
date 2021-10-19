@@ -99,7 +99,7 @@ class DCFG:
         """
         utils.raise_type_error_if_not_type_of(rule, Rule)
 
-        if self.__rule_exists(rule):
+        if self._rule_exists(rule):
             return
 
         rule_id = self.__get_next_rule_id()
@@ -435,7 +435,7 @@ class DCFG:
 
         return RuleId(next_rule_id)
 
-    def __rule_exists(self, rule: Rule) -> bool:
+    def _rule_exists(self, rule: Rule) -> bool:
         assert isinstance(rule, Rule)
 
         try:
@@ -485,7 +485,7 @@ class DCFG:
     def __expand_rhs_of_rule_by_id(self, rule_id: RuleId) -> typing.List[Clause]:
         assert isinstance(rule_id, RuleId)
 
-        expansions_of_each_rhs_symbol: typing.List[Clause] = []
+        expansions_of_each_rhs_symbol: typing.List[typing.List[Clause]] = []
 
         rhs = self.__get_rhs_by_rule_id(rule_id)
         for symbol in rhs:
