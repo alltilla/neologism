@@ -21,6 +21,7 @@ setuptools.setup(
         "Documentation": "https://neologism.readthedocs.io/",
     },
     packages=setuptools.find_packages(include=["neologism"]),
+    package_data={"neologism": ["py.typed"]},
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
