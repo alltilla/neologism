@@ -345,7 +345,7 @@ class DCFG:
         return utils.is_multidigraph_finite(self.__graph, self.start_symbol)
 
     @property
-    def sentences(self) -> typing.Set[tuple]:
+    def sentences(self) -> typing.Set[typing.Tuple[str, ...]]:
         """
         :getter: Returns all possible sentences of the grammar, starting with :attr:`start_symbol`.
         :type: set[tuple]
