@@ -3,9 +3,14 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
-      is_test_release:
-        description: "is_test_release (true/false): If set to true, uploads to test.pypi.org and does not create a GitHub Release."
+      is-stable-release:
+        description: "is-stable-release: If set to false, uploads to test.pypi.org and does not create a GitHub Release."
         required: true
+        type: choice
+        options:
+          - "true"
+          - "false"
+        default: "false"
 
 jobs:
   release:
@@ -41,17 +46,17 @@ jobs:
           pytest --import-mode=importlib
 
       - name: upload package (test.pypi.org)
-        if: github.event.inputs.is_test_release == 'true'
+        if: github.event.inputs.is-stable-release == 'false'
         run: |
           twine upload -r testpypi dist/* -u __token__ -p ${{ secrets.TEST_PYPI_API_TOKEN }}
 
       - name: upload package (pypi.org)
-        if: github.event.inputs.is_test_release == 'false'
+        if: github.event.inputs.is-stable-release == 'true'
         run: |
           twine upload dist/* -u __token__ -p ${{ secrets.PYPI_API_TOKEN }}
 
       - name: Publish GitHub Release
-        if: github.event.inputs.is_test_release == 'false'
+        if: github.event.inputs.is-stable-release == 'true'
         run: |
           VERSION=$(cat VERSION | tr -d "\n")
           echo ${VERSION} > /tmp/message
