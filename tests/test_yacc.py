@@ -63,7 +63,7 @@ def test_parse_yacc(yacc_file):
         Rule("start", ("test",)),
         Rule("test", ("test1", "test1next", "test1next")),
         Rule("test", ("test2", "test2next", "test")),
-        Rule("test", ("KW_TEST", "'('", "test_opts", "')'")),
+        Rule("test", ("KW_TEST", "(", "test_opts", ")")),
         Rule("test", ()),
         Rule("test_opts", ("number",)),
         Rule("test_opts", ("string",)),

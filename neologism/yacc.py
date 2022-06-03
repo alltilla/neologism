@@ -33,13 +33,19 @@ def __yacc2xml(yacc_file_path: str, custom_path: str = None):
     return xml_file
 
 
+def __unescape(keyword: str) -> str:
+    if len(keyword) == 3 and keyword[0] == "'" and keyword[-1] == "'":
+        return keyword.strip("'")
+    return keyword
+
+
 def __xml2rules(xml_file):
     rules = set()
 
     root = xml_parser.parse(xml_file.name).getroot()
     for rule in root.iter("rule"):
-        lhs = rule.find("lhs").text
-        rhs = [symbol.text for symbol in rule.find("rhs") if symbol.tag != "empty"]
+        lhs = __unescape(rule.find("lhs").text)
+        rhs = [__unescape(symbol.text) for symbol in rule.find("rhs") if symbol.tag != "empty"]
         rules.add(Rule(lhs, rhs))
 
     return rules
