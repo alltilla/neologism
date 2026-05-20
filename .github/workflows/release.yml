@@ -16,9 +16,6 @@ jobs:
   release:
     runs-on: ubuntu-latest
 
-    container:
-      image: python:3
-
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -29,8 +26,8 @@ jobs:
       - name: Setup environment
         run: |
           pip install poetry
-          apt update
-          apt install -y bison hub
+          sudo apt update
+          sudo apt install -y bison
 
       - name: Install dependencies
         run: poetry install
@@ -61,7 +58,6 @@ jobs:
           VERSION=$(poetry version -s)
           echo ${VERSION} > /tmp/message
 
-          hub release create \
-            --file /tmp/message \
-            --attach dist/neologism-${VERSION}.tar.gz \
-            ${VERSION}
+          gh release create ${VERSION} \
+            --notes-file /tmp/message \
+            dist/neologism-${VERSION}.tar.gz
