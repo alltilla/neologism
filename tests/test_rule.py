@@ -49,6 +49,19 @@ def test_eq():
     assert rule1 == rule2
 
 
+def test_eq_with_different_type():
+    rule = Rule("symbol1", ("symbol2", "symbol3"))
+
+    class RuleLike:
+        lhs = "symbol1"
+        rhs = ("symbol2", "symbol3")
+
+    assert rule != RuleLike()
+    assert rule != ("symbol1", ("symbol2", "symbol3"))
+    assert rule != None  # noqa: E711
+    assert rule != "Rule('symbol1' => 'symbol2' 'symbol3')"
+
+
 def test_hash():
     rule1 = Rule("symbol1", ("symbol2", "symbol3"))
     rule2 = Rule("symbol1", ("symbol2", "symbol3"))

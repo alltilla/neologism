@@ -35,7 +35,9 @@ class Rule:
     def __repr__(self) -> str:
         return "Rule({} => {})".format(repr(self.lhs), " ".join([repr(symbol) for symbol in self.rhs]))
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Rule):
+            return NotImplemented
         return self.lhs == other.lhs and self.rhs == other.rhs
 
     def __hash__(self) -> int:
