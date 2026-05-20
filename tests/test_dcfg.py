@@ -380,6 +380,31 @@ def test_iter_sentences_empty_grammar():
     assert list(dcfg.iter_sentences()) == []
 
 
+def test_iter_sentences_is_lazy():
+    # A grammar whose enumeration would never finish if it weren't lazy:
+    # the finite-loop-stripping fallback bounds it, but only one sentence
+    # is needed for this test, and iter_sentences must produce it without
+    # consuming the rest of the cartesian product.
+    dcfg = DCFG()
+    dcfg.add_rule(Rule("start", ("first", "rest")))
+    dcfg.add_rule(Rule("rest", ("rest",)))  # self-loop in non-first position
+
+    first = next(dcfg.iter_sentences())
+
+    assert first[:1] == ("first",)
+
+
+def test_from_yacc_file_with_bison_path():
+    yacc = "%%\nstart : %%\n"
+
+    with NamedTemporaryFile(mode="w") as f:
+        f.write(yacc)
+        f.flush()
+        # custom_path="" wipes PATH so bison can't be found.
+        with pytest.raises(ChildProcessError):
+            DCFG.from_yacc_file(f.name, bison_path="")
+
+
 def test_copy(dcfg: DCFG):
     copied = dcfg.copy()
 
