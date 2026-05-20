@@ -9,7 +9,7 @@ class Rule:
 
     :class:`Rule` is immutable, hashable and has its equivalence implemented.
 
-    .. warning:: Passing a :class:`str` as :attr:`rhs` is undefined behavior — strings
+    .. warning:: Passing a :class:`str` as :attr:`rhs` is undefined behavior -- strings
                  are iterable, so the constructor would silently produce a per-character
                  rule. Pass a tuple, list, or other iterable of symbol strings.
     """

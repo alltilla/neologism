@@ -293,7 +293,18 @@ class DCFG:
 
         .. note:: If it is not explicitly set, the first added rule's :attr:`lhs` is used.
 
-        .. seealso:: :attr:`sentences`
+        :raise ValueError: (setter only) If the new start symbol is not in the grammar.
+
+        .. seealso:: :attr:`sentences`, :func:`iter_sentences`
+
+        >>> dcfg = DCFG()
+        >>> dcfg.add_rule(Rule("a", ("b",)))
+        >>> dcfg.add_rule(Rule("c", ("d",)))
+        >>> dcfg.start_symbol
+        'a'
+        >>> dcfg.start_symbol = "c"
+        >>> dcfg.start_symbol
+        'c'
         """
         if self.__start_symbol is None or self.__start_symbol not in self.symbols:
             if len(self.__rule_ids) != 0:
@@ -381,8 +392,8 @@ class DCFG:
         :return: A fully independent copy of the grammar.
         :rtype: DCFG
 
-        .. note:: Mutations on the returned :class:`DCFG` — including future
-                  changes to node or edge attributes on the underlying graph —
+        .. note:: Mutations on the returned :class:`DCFG` -- including future
+                  changes to node or edge attributes on the underlying graph --
                   never affect the original.
         """
         copied = DCFG()
