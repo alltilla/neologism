@@ -20,11 +20,10 @@ def test_constructor_with_rhs_as_list():
     assert rule.rhs == tuple(rhs)
 
 
-def test_constructor_with_unsupported_rhs():
-    lhs = "symbol1"
-    rhs = "symbol2"
-    with pytest.raises(TypeError):
-        Rule(lhs, rhs)
+def test_constructor_with_rhs_as_generator():
+    rule = Rule("symbol1", (s for s in ("symbol2", "symbol3")))
+
+    assert rule.rhs == ("symbol2", "symbol3")
 
 
 def test_immutability():
@@ -47,6 +46,19 @@ def test_eq():
     rule2 = Rule("symbol1", ("symbol2", "symbol3"))
 
     assert rule1 == rule2
+
+
+def test_eq_with_different_type():
+    rule = Rule("symbol1", ("symbol2", "symbol3"))
+
+    class RuleLike:
+        lhs = "symbol1"
+        rhs = ("symbol2", "symbol3")
+
+    assert rule != RuleLike()
+    assert rule != ("symbol1", ("symbol2", "symbol3"))
+    assert rule != None  # noqa: E711
+    assert rule != "Rule('symbol1' => 'symbol2' 'symbol3')"
 
 
 def test_hash():

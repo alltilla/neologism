@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import copy as _copy
+import itertools
+import os
 import typing
 
 import networkx
@@ -7,8 +10,6 @@ import networkx
 from . import utils
 from .rule import Rule
 from .yacc import parse as yacc_parse
-
-Clause = typing.List[str]  # Part of a sentence
 
 
 class RuleId(int):
@@ -38,8 +39,8 @@ class DCFG:
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
-        >>> dcfg.rules
-        {Rule('c' => 'x' 'y' 'z'), Rule('a' => 'b' 'c' 'd')}
+        >>> sorted(dcfg.rules, key=repr)
+        [Rule('a' => 'b' 'c' 'd'), Rule('c' => 'x' 'y' 'z')]
         """
         rules = set()
 
@@ -58,20 +59,16 @@ class DCFG:
         :return: The rules, that define the grammar and contain the given symbol.
         :rtype: set[Rule]
 
-        :raise TypeError: If :attr:`symbol` is not an instance of :class:`str`.
-
         .. seealso:: :attr:`rules`
 
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
-        >>> dcfg.rules_containing("d")
-        {Rule('a' => 'b' 'c' 'd')}
-        >>> dcfg.rules_containing("c")
-        {Rule('c' => 'x' 'y' 'z'), Rule('a' => 'b' 'c' 'd')}
+        >>> sorted(dcfg.rules_containing("d"), key=repr)
+        [Rule('a' => 'b' 'c' 'd')]
+        >>> sorted(dcfg.rules_containing("c"), key=repr)
+        [Rule('a' => 'b' 'c' 'd'), Rule('c' => 'x' 'y' 'z')]
         """
-        utils.raise_type_error_if_not_type_of(symbol, str)
-
         rules = set()
 
         rule_ids = set(self.__graph.predecessors(symbol)) | set(self.__graph.successors(symbol))
@@ -89,16 +86,12 @@ class DCFG:
         :param rule: The new rule to add.
         :type rule: Rule
 
-        :raise TypeError: If :attr:`rule` is not an instance of :class:`Rule`.
-
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
-        >>> dcfg.rules
-        {Rule('c' => 'x' 'y' 'z'), Rule('a' => 'b' 'c' 'd')}
+        >>> sorted(dcfg.rules, key=repr)
+        [Rule('a' => 'b' 'c' 'd'), Rule('c' => 'x' 'y' 'z')]
         """
-        utils.raise_type_error_if_not_type_of(rule, Rule)
-
         if self._rule_exists(rule):
             return
 
@@ -117,24 +110,21 @@ class DCFG:
         :param rule: The rule to remove.
         :type rule: Rule
 
-        :raise TypeError: If :attr:`rule` is not an instance of :class:`Rule`.
         :raise ValueError: If :attr:`rule` is not in the rules of the grammar.
 
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
-        >>> dcfg.rules
-        {Rule('c' => 'x' 'y' 'z'), Rule('a' => 'b' 'c' 'd')}
-        >>> dcfg.symbols
-        {'y', 'a', 'x', 'b', 'c', 'd', 'z'}
+        >>> sorted(dcfg.rules, key=repr)
+        [Rule('a' => 'b' 'c' 'd'), Rule('c' => 'x' 'y' 'z')]
+        >>> sorted(dcfg.symbols)
+        ['a', 'b', 'c', 'd', 'x', 'y', 'z']
         >>> dcfg.remove_rule(Rule("c", ("x", "y", "z")))
-        >>> dcfg.rules
-        {Rule('a' => 'b' 'c' 'd')}
-        >>> dcfg.symbols
-        {'a', 'b', 'c', 'd'}
+        >>> sorted(dcfg.rules, key=repr)
+        [Rule('a' => 'b' 'c' 'd')]
+        >>> sorted(dcfg.symbols)
+        ['a', 'b', 'c', 'd']
         """
-        utils.raise_type_error_if_not_type_of(rule, Rule)
-
         rule_found = False
         possible_rule_ids = list(self.__graph.successors(rule.lhs))  # cast to list, to make a copy
 
@@ -157,8 +147,8 @@ class DCFG:
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
-        >>> dcfg.symbols
-        {'y', 'a', 'x', 'b', 'c', 'd', 'z'}
+        >>> sorted(dcfg.symbols)
+        ['a', 'b', 'c', 'd', 'x', 'y', 'z']
         """
         return set(filter(lambda node: isinstance(node, str), self.__graph.nodes))
 
@@ -176,8 +166,8 @@ class DCFG:
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
         >>> dcfg.add_rule(Rule("c", ("1", "2", "3")))
-        >>> dcfg.terminals
-        {'b', 'x', 'z', '1', '3', 'y', '2', 'd'}
+        >>> sorted(dcfg.terminals)
+        ['1', '2', '3', 'b', 'd', 'x', 'y', 'z']
         """
         return set(filter(lambda node: isinstance(node, str) and self.is_symbol_terminal(node), self.__graph.nodes))
 
@@ -195,8 +185,8 @@ class DCFG:
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
         >>> dcfg.add_rule(Rule("c", ("1", "2", "3")))
-        >>> dcfg.nonterminals
-        {'c', 'a'}
+        >>> sorted(dcfg.nonterminals)
+        ['a', 'c']
         """
         return set(filter(lambda node: isinstance(node, str) and not self.is_symbol_terminal(node), self.__graph.nodes))
 
@@ -207,7 +197,6 @@ class DCFG:
         :param symbol: Symbol to remove.
         :type symbol: str
 
-        :raise TypeError: If :attr:`symbol` is not an instance of :class:`str`.
         :raise ValueError: If :attr:`symbol` was not in the grammar.
 
         .. note:: If :attr:`symbol` was used by a rule in the grammar, it will be removed from the rule, too.
@@ -219,18 +208,16 @@ class DCFG:
 
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
-        >>> dcfg.rules
-        {Rule('a' => 'b' 'c' 'd')}
-        >>> dcfg.symbols
-        {'d', 'a', 'c', 'b'}
+        >>> sorted(dcfg.rules, key=repr)
+        [Rule('a' => 'b' 'c' 'd')]
+        >>> sorted(dcfg.symbols)
+        ['a', 'b', 'c', 'd']
         >>> dcfg.remove_symbol("c")
-        >>> dcfg.rules
-        {Rule('a' => 'b' 'd')}
-        >>> dcfg.symbols
-        {'d', 'a', 'b'}
+        >>> sorted(dcfg.rules, key=repr)
+        [Rule('a' => 'b' 'd')]
+        >>> sorted(dcfg.symbols)
+        ['a', 'b', 'd']
         """
-        utils.raise_type_error_if_not_type_of(symbol, str)
-
         self.make_symbol_terminal(symbol)
         self.__graph.remove_node(symbol)
 
@@ -241,7 +228,6 @@ class DCFG:
         :param symbol: The symbol to check.
         :type symbol: str
 
-        :raise TypeError: If :attr:`symbol` is not an instance of :class:`str`.
         :raise ValueError: If :attr:`symbol` was not in the grammar.
 
         .. seealso:: :attr:`symbols`, :attr:`terminals`, :attr:`nonterminals`, :func:`make_symbol_terminal`
@@ -249,17 +235,15 @@ class DCFG:
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
-        >>> dcfg.terminals
-        {'b', 'z', 'y', 'x', 'd'}
-        >>> dcfg.nonterminals
-        {'c', 'a'}
+        >>> sorted(dcfg.terminals)
+        ['b', 'd', 'x', 'y', 'z']
+        >>> sorted(dcfg.nonterminals)
+        ['a', 'c']
         >>> dcfg.is_symbol_terminal("a")
         False
         >>> dcfg.is_symbol_terminal("b")
         True
         """
-        utils.raise_type_error_if_not_type_of(symbol, str)
-
         try:
             return len(list(self.__graph.successors(symbol))) == 0
         except networkx.NetworkXError:
@@ -275,7 +259,6 @@ class DCFG:
         :param symbol: The symbol to be made terminal.
         :type symbol: str
 
-        :raise TypeError: If :attr:`symbol` is not an instance of :class:`str`.
         :raise ValueError: If :attr:`symbol` was not in the grammar.
 
         .. seealso:: :attr:`symbols`, :attr:`terminals`, :attr:`nonterminals`, :func:`is_symbol_terminal`
@@ -283,18 +266,16 @@ class DCFG:
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
-        >>> dcfg.rules
-        {Rule('c' => 'x' 'y' 'z'), Rule('a' => 'b' 'c' 'd')}
-        >>> dcfg.symbols
-        {'y', 'a', 'x', 'b', 'c', 'd', 'z'}
+        >>> sorted(dcfg.rules, key=repr)
+        [Rule('a' => 'b' 'c' 'd'), Rule('c' => 'x' 'y' 'z')]
+        >>> sorted(dcfg.symbols)
+        ['a', 'b', 'c', 'd', 'x', 'y', 'z']
         >>> dcfg.make_symbol_terminal("c")
-        >>> dcfg.rules
-        {Rule('a' => 'b' 'c' 'd')}
-        >>> dcfg.symbols
-        {'a', 'b', 'c', 'd'}
+        >>> sorted(dcfg.rules, key=repr)
+        [Rule('a' => 'b' 'c' 'd')]
+        >>> sorted(dcfg.symbols)
+        ['a', 'b', 'c', 'd']
         """
-        utils.raise_type_error_if_not_type_of(symbol, str)
-
         try:
             rule_ids = list(self.__graph.successors(symbol))  # cast to list, to make a copy
         except networkx.NetworkXError:
@@ -325,8 +306,6 @@ class DCFG:
 
     @start_symbol.setter
     def start_symbol(self, symbol: str) -> None:
-        utils.raise_type_error_if_not_type_of(symbol, str)
-
         if symbol not in self.__graph.nodes:
             raise ValueError("{} not in symbols".format(symbol))
 
@@ -344,6 +323,37 @@ class DCFG:
 
         return utils.is_multidigraph_finite(self.__graph, self.start_symbol)
 
+    def iter_sentences(self) -> typing.Iterator[typing.Tuple[str, ...]]:
+        """
+        Yields all possible sentences of the grammar one at a time, starting
+        with :attr:`start_symbol`.
+
+        .. note:: If the grammar is not finite, sentences are generated from a copy of the grammar,
+                  which has been made finite.
+
+        .. note:: Unlike :attr:`sentences`, the stream is not deduplicated. Ambiguous grammars may
+                  yield the same sentence more than once. Wrap in :class:`set` if uniqueness matters.
+
+        .. seealso:: :attr:`sentences`, :func:`is_finite`, :attr:`start_symbol`
+
+        >>> dcfg = DCFG()
+        >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
+        >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
+        >>> dcfg.add_rule(Rule("c", ("1", "2", "3")))
+        >>> sorted(dcfg.iter_sentences())
+        [('b', '1', '2', '3', 'd'), ('b', 'x', 'y', 'z', 'd')]
+        """
+        if self.start_symbol is None:
+            return
+
+        dcfg = self
+
+        if not self.is_finite():
+            dcfg = self.copy()
+            utils.remove_loops_from_multidigraph(dcfg.__graph, dcfg.start_symbol)
+
+        yield from dcfg.__iter_expand_symbol(dcfg.start_symbol)
+
     @property
     def sentences(self) -> typing.Set[typing.Tuple[str, ...]]:
         """
@@ -353,64 +363,67 @@ class DCFG:
         .. note:: If the grammar is not finite, sentences are generated from a copy of the grammar,
                   which has been made finite.
 
-        .. seealso:: :func:`is_finite`, :attr:`start_symbol`
+        .. seealso:: :func:`iter_sentences`, :func:`is_finite`, :attr:`start_symbol`
 
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
         >>> dcfg.add_rule(Rule("c", ("1", "2", "3")))
-        >>> dcfg.sentences
-        {('b', 'x', 'y', 'z', 'd'), ('b', '1', '2', '3', 'd')}
+        >>> sorted(dcfg.sentences)
+        [('b', '1', '2', '3', 'd'), ('b', 'x', 'y', 'z', 'd')]
         """
-        if self.start_symbol is None:
-            return set()
-
-        dcfg = self
-
-        if not self.is_finite():
-            dcfg = self.copy()
-            utils.remove_loops_from_multidigraph(dcfg.__graph, dcfg.start_symbol)
-
-        sentences_as_list = dcfg.__expand_symbol(dcfg.start_symbol)
-
-        sentences = set()
-        for sentence in sentences_as_list:
-            sentences.add(tuple(sentence))
-
-        return sentences
+        return set(self.iter_sentences())
 
     # Misc
 
     def copy(self) -> DCFG:
         """
-        :return: A copy of the grammar.
+        :return: A fully independent copy of the grammar.
         :rtype: DCFG
+
+        .. note:: Mutations on the returned :class:`DCFG` — including future
+                  changes to node or edge attributes on the underlying graph —
+                  never affect the original.
         """
         copied = DCFG()
-        copied.__graph = self.__graph.copy()  # Shallow copy, but we do not store containers, so it is okay
+        copied.__graph = _copy.deepcopy(self.__graph)
         copied.__next_rule_id = self.__next_rule_id
         copied.__start_symbol = self.__start_symbol
 
         return copied
 
-    def load_yacc_file(self, file_path: str) -> None:
+    @classmethod
+    def from_yacc_file(
+        cls,
+        file_path: str | os.PathLike[str],
+        bison_path: str | None = None,
+    ) -> DCFG:
         """
-        Loads rules from a yacc file.
+        Construct a :class:`DCFG` by loading rules from a bison-style yacc file.
 
-        .. note:: Using this function needs ``bison`` to be installed and be on ``PATH``.
+        Bison-specific cleanup is applied: the ``$end`` terminal is removed and
+        :attr:`start_symbol` is set to ``$accept``.
+
+        .. note:: This function needs ``bison`` to be installed and on ``PATH``
+                  (or located via :attr:`bison_path`).
 
         :param file_path: The path of the yacc file.
-        :type file_path: str
+        :type file_path: str | os.PathLike[str]
+
+        :param bison_path: Optional ``PATH`` override used to locate ``bison``.
+        :type bison_path: str | None
 
         :raise ChildProcessError: If ``bison`` is not available on the system.
+        :raise YaccDecodeError: If ``bison`` fails to parse the yacc file.
         """
-        rules = yacc_parse(file_path)
+        dcfg = cls()
+        for rule in yacc_parse(os.fspath(file_path), bison_path):
+            dcfg.add_rule(rule)
 
-        for rule in rules:
-            self.add_rule(rule)
+        dcfg.remove_symbol("$end")
+        dcfg.start_symbol = "$accept"
 
-        self.remove_symbol("$end")
-        self.start_symbol = "$accept"
+        return dcfg
 
     def load_dcfg(self, dcfg: DCFG) -> None:
         """
@@ -482,33 +495,24 @@ class DCFG:
 
         return Rule(lhs, rhs)
 
-    def __expand_rhs_of_rule_by_id(self, rule_id: RuleId) -> typing.List[Clause]:
+    def __iter_expand_rhs_of_rule_by_id(self, rule_id: RuleId) -> typing.Iterator[typing.Tuple[str, ...]]:
         assert isinstance(rule_id, RuleId)
 
-        expansions_of_each_rhs_symbol: typing.List[typing.List[Clause]] = []
-
         rhs = self.__get_rhs_by_rule_id(rule_id)
-        for symbol in rhs:
-            expansions_of_each_rhs_symbol.append(self.__expand_symbol(symbol))
+        per_position = [list(self.__iter_expand_symbol(symbol)) for symbol in rhs]
 
-        return utils.get_all_combinations(expansions_of_each_rhs_symbol)
+        for combo in itertools.product(*per_position):
+            yield tuple(itertools.chain.from_iterable(combo))
 
-    def __expand_symbol(self, symbol: str) -> typing.List[Clause]:
+    def __iter_expand_symbol(self, symbol: str) -> typing.Iterator[typing.Tuple[str, ...]]:
         assert isinstance(symbol, str)
 
-        expansions: typing.List[Clause] = []
-
         if self.is_symbol_terminal(symbol):
-            expansion: Clause = [symbol]
-            expansions.append(expansion)
+            yield (symbol,)
+            return
 
-            return expansions
-
-        rule_ids = self.__graph.successors(symbol)
-        for rule_id in rule_ids:
-            expansions.extend(self.__expand_rhs_of_rule_by_id(rule_id))
-
-        return expansions
+        for rule_id in self.__graph.successors(symbol):
+            yield from self.__iter_expand_rhs_of_rule_by_id(rule_id)
 
     def __remove_rule_by_id(self, rule_id: RuleId) -> None:
         related_symbols = set()

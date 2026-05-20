@@ -1,12 +1,53 @@
+[tool.poetry]
+name = "neologism"
+version = "0.0.8"
+description = "Dynamically modifiable context-free grammar written in python"
+authors = ["Attila Szakacs <szakacs.attila96@gmail.com>"]
+readme = "README.md"
+license = "GPL-3.0-or-later"
+homepage = "https://github.com/alltilla/neologism"
+repository = "https://github.com/alltilla/neologism"
+documentation = "https://neologism.readthedocs.io/"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+packages = [{include = "neologism"}]
+include = [
+    { path = "LICENSE", format = ["sdist", "wheel"] },
+    { path = "CHANGELOG.md", format = ["sdist", "wheel"] },
+    { path = "neologism/py.typed", format = ["sdist", "wheel"] },
+]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+networkx = "*"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "*"
+pytest-cov = "*"
+mypy = "<2.0"
+black = "*"
+sphinx = "*"
+sphinx-rtd-theme = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.black]
 line-length = 120
-
-[[tool.mypy.overrides]]
-module = "setuptools.*"
-follow_imports = "skip"
-ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = "networkx.*"
 follow_imports = "skip"
 ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+addopts = "--cov=neologism --cov-branch --cov-report=term-missing --doctest-modules"
+testpaths = ["neologism", "tests"]
+
+[tool.coverage.run]
+omit = [
+    "tests/*",
+]

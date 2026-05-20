@@ -11,11 +11,12 @@ jobs:
     strategy:
       matrix:
         python-version:
-          - "3"
-          - "3.7"
-          - "3.8"
           - "3.9"
           - "3.10"
+          - "3.11"
+          - "3.12"
+          - "3.13"
+          - "3.14"
         mode:
           - "installed"
           - "source-code"
@@ -26,32 +27,34 @@ jobs:
 
     steps:
       - name: Checkout source
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup environment
         run: |
-          pip install -r requirements.txt
-          pip install pytest pytest-cov build
+          pip install poetry
           apt update
           apt install -y bison
 
-      - name: build
-        if: matrix.mode == 'installed'
-        run: |
-          python -m build
+      - name: Install (source-code mode)
+        if: matrix.mode == 'source-code'
+        run: poetry install
 
-      - name: install
+      - name: Build & install wheel (installed mode)
         if: matrix.mode == 'installed'
         run: |
-          pip install dist/*.whl
+          poetry build
+          pip install dist/*.whl pytest
 
       - name: pytest
         run: |
           if [ "${{ matrix.mode }}" = "installed" ]
           then
-            pytest --import-mode=importlib
+            # Installed-mode just verifies the wheel ships correctly; clear the
+            # pyproject addopts so --cov flags don't reach a pytest without the
+            # cov plugin installed.
+            pytest -o "addopts=" --import-mode=importlib
           else
-            pytest --cov=neologism --cov-fail-under=100
+            poetry run pytest --cov-fail-under=100
           fi
 
   style-check:
@@ -62,15 +65,15 @@ jobs:
 
     steps:
       - name: Checkout source
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup environment
         run: |
-          pip install black
+          pip install poetry
+          poetry install
 
       - name: black
-        run: |
-          black --check --diff .
+        run: poetry run black --check --diff .
 
   linter:
     runs-on: ubuntu-latest
@@ -80,29 +83,30 @@ jobs:
 
     steps:
       - name: Checkout source
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup environment
         run: |
-          pip install pytest mypy
+          pip install poetry
+          poetry install
 
       - name: mypy
-        run: |
-          mypy .
+        run: poetry run mypy .
 
   doc-check:
     runs-on: ubuntu-latest
 
-    container: python:3
+    container:
+      image: python:3
+
     steps:
       - name: Checkout source
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup environment
         run: |
-          pip install -r requirements.txt
-          pip install sphinx sphinx-rtd-theme
+          pip install poetry
+          poetry install
 
       - name: sphinx-build
-        run: |
-          sphinx-build -W -b html docs/source/ docs/build/html
+        run: poetry run sphinx-build -W -b html docs/source/ docs/build/html

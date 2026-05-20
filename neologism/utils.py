@@ -1,24 +1,4 @@
 from networkx import MultiDiGraph
-import copy
-import typing
-
-
-def raise_type_error_if_not_type_of(variable: typing.Any, type: type) -> None:
-    if not isinstance(variable, type):
-        raise TypeError()
-
-
-def raise_type_error_if_not_type_of_multiple(variable: typing.Any, types: typing.List[type]) -> None:
-    match = False
-
-    for type in types:
-        if not isinstance(variable, type):
-            continue
-        match = True
-        break
-
-    if not match:
-        raise TypeError()
 
 
 def is_multidigraph_finite(graph: MultiDiGraph, start_node) -> bool:
@@ -51,23 +31,3 @@ def remove_loops_from_multidigraph(graph: MultiDiGraph, start_node) -> None:
         nodes_traversed.remove(node)
 
     __remove_loops(graph, start_node, set())
-
-
-def get_all_combinations(
-    possibilites_in_each_position: typing.List[typing.List[typing.List]],
-) -> typing.List[typing.List]:
-
-    combinations: typing.List[typing.List] = [[]]
-
-    for possibilities_in_position in possibilites_in_each_position:
-        combinations_orig_len = len(combinations)
-        for _ in range(len(possibilities_in_position) - 1):
-            combinations.extend(copy.deepcopy(combinations[:combinations_orig_len]))
-
-        idx = 0
-        for possibility in possibilities_in_position:
-            for _ in range(combinations_orig_len):
-                combinations[idx].extend(possibility)
-                idx += 1
-
-    return combinations

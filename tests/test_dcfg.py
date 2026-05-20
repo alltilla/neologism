@@ -25,7 +25,7 @@ def dcfg() -> DCFG:
     return dcfg
 
 
-def test_load_yacc_file():
+def test_from_yacc_file():
     test_yacc = r"""
         %token t_1
         %token t_2
@@ -57,8 +57,7 @@ def test_load_yacc_file():
     with NamedTemporaryFile(mode="w") as f:
         f.write(test_yacc)
         f.flush()
-        dcfg = DCFG()
-        dcfg.load_yacc_file(f.name)
+        dcfg = DCFG.from_yacc_file(f.name)
 
     expected_symbols = {
         "$accept",
@@ -362,6 +361,50 @@ def test_sentences_getter_empty_grammar():
     assert dcfg.sentences == set()
 
 
+def test_iter_sentences(dcfg: DCFG):
+    expected = {
+        ("t_1", "t_2", "t_2"),
+        ("t_3", "t_4"),
+        ("t_5", "t_6"),
+        ("t_5", "t_7"),
+        (),
+    }
+
+    iterator = dcfg.iter_sentences()
+    assert iter(iterator) is iterator  # actually lazy
+    assert set(iterator) == expected
+
+
+def test_iter_sentences_empty_grammar():
+    dcfg = DCFG()
+    assert list(dcfg.iter_sentences()) == []
+
+
+def test_iter_sentences_is_lazy():
+    # A grammar whose enumeration would never finish if it weren't lazy:
+    # the finite-loop-stripping fallback bounds it, but only one sentence
+    # is needed for this test, and iter_sentences must produce it without
+    # consuming the rest of the cartesian product.
+    dcfg = DCFG()
+    dcfg.add_rule(Rule("start", ("first", "rest")))
+    dcfg.add_rule(Rule("rest", ("rest",)))  # self-loop in non-first position
+
+    first = next(dcfg.iter_sentences())
+
+    assert first[:1] == ("first",)
+
+
+def test_from_yacc_file_with_bison_path():
+    yacc = "%%\nstart : %%\n"
+
+    with NamedTemporaryFile(mode="w") as f:
+        f.write(yacc)
+        f.flush()
+        # custom_path="" wipes PATH so bison can't be found.
+        with pytest.raises(ChildProcessError):
+            DCFG.from_yacc_file(f.name, bison_path="")
+
+
 def test_copy(dcfg: DCFG):
     copied = dcfg.copy()
 
@@ -369,8 +412,14 @@ def test_copy(dcfg: DCFG):
     assert copied.symbols == dcfg.symbols
     assert copied.start_symbol == dcfg.start_symbol
 
-    new_rule = Rule("NT_1", ("foo",))
-    dcfg.add_rule(new_rule)
+    rule_added_to_original = Rule("NT_1", ("foo",))
+    dcfg.add_rule(rule_added_to_original)
 
-    assert new_rule in dcfg.rules
-    assert new_rule not in copied.rules
+    assert rule_added_to_original in dcfg.rules
+    assert rule_added_to_original not in copied.rules
+
+    rule_added_to_copy = Rule("NT_1", ("bar",))
+    copied.add_rule(rule_added_to_copy)
+
+    assert rule_added_to_copy in copied.rules
+    assert rule_added_to_copy not in dcfg.rules
