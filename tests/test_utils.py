@@ -30,6 +30,21 @@ def test_is_multidigraph_finite(finite_multidigraph: MultiDiGraph, infinite_mult
     assert not is_multidigraph_finite(infinite_multidigraph, "a")
 
 
+def test_is_multidigraph_finite_diamond():
+    # a -> b -> d
+    # a -> c -> d
+    # The shared `d` is reached via two independent paths. The previous
+    # implementation reported this as non-finite because it tracked
+    # "ever visited" rather than "currently on the DFS stack."
+    graph = MultiDiGraph()
+    graph.add_edge("a", "b")
+    graph.add_edge("a", "c")
+    graph.add_edge("b", "d")
+    graph.add_edge("c", "d")
+
+    assert is_multidigraph_finite(graph, "a")
+
+
 def test_remove_loops_from_multidigraph(infinite_multidigraph: MultiDiGraph):
     remove_loops_from_multidigraph(infinite_multidigraph, "a")
     assert is_multidigraph_finite(infinite_multidigraph, "a")

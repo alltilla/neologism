@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `DCFG.is_finite()` now correctly returns `True` on diamond grammars
+  (where a nonterminal is reachable from the start symbol via more
+  than one path without any cycle). The previous implementation
+  tracked "ever-visited" nodes instead of nodes currently on the DFS
+  stack, so any shared subgraph was misreported as a cycle. Sentence
+  enumeration was already correct -- the actual cycle-removal pass
+  uses a proper stack -- so the visible effect of the bug was an
+  unnecessary copy + traversal in `iter_sentences` on grammars with
+  shared subgraphs, plus any consumer call to `is_finite()` returning
+  the wrong answer.
+
 ## [1.0.0] - 2026-05-20
 
 First stable release. The library has been in use through 0.0.x; this
