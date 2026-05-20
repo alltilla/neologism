@@ -2,7 +2,7 @@
 line-length = 120
 
 [tool.pytest.ini_options]
-addopts = "--cov=neologism --cov-branch --cov-report=term-missing"
+addopts = "--cov=neologism --cov-branch --cov-report=term-missing --doctest-modules"
 
 [tool.coverage.run]
 omit = [

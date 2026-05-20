@@ -39,8 +39,8 @@ class DCFG:
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
-        >>> dcfg.rules
-        {Rule('c' => 'x' 'y' 'z'), Rule('a' => 'b' 'c' 'd')}
+        >>> sorted(dcfg.rules, key=repr)
+        [Rule('a' => 'b' 'c' 'd'), Rule('c' => 'x' 'y' 'z')]
         """
         rules = set()
 
@@ -64,10 +64,10 @@ class DCFG:
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
-        >>> dcfg.rules_containing("d")
-        {Rule('a' => 'b' 'c' 'd')}
-        >>> dcfg.rules_containing("c")
-        {Rule('c' => 'x' 'y' 'z'), Rule('a' => 'b' 'c' 'd')}
+        >>> sorted(dcfg.rules_containing("d"), key=repr)
+        [Rule('a' => 'b' 'c' 'd')]
+        >>> sorted(dcfg.rules_containing("c"), key=repr)
+        [Rule('a' => 'b' 'c' 'd'), Rule('c' => 'x' 'y' 'z')]
         """
         rules = set()
 
@@ -89,8 +89,8 @@ class DCFG:
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
-        >>> dcfg.rules
-        {Rule('c' => 'x' 'y' 'z'), Rule('a' => 'b' 'c' 'd')}
+        >>> sorted(dcfg.rules, key=repr)
+        [Rule('a' => 'b' 'c' 'd'), Rule('c' => 'x' 'y' 'z')]
         """
         if self._rule_exists(rule):
             return
@@ -115,15 +115,15 @@ class DCFG:
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
-        >>> dcfg.rules
-        {Rule('c' => 'x' 'y' 'z'), Rule('a' => 'b' 'c' 'd')}
-        >>> dcfg.symbols
-        {'y', 'a', 'x', 'b', 'c', 'd', 'z'}
+        >>> sorted(dcfg.rules, key=repr)
+        [Rule('a' => 'b' 'c' 'd'), Rule('c' => 'x' 'y' 'z')]
+        >>> sorted(dcfg.symbols)
+        ['a', 'b', 'c', 'd', 'x', 'y', 'z']
         >>> dcfg.remove_rule(Rule("c", ("x", "y", "z")))
-        >>> dcfg.rules
-        {Rule('a' => 'b' 'c' 'd')}
-        >>> dcfg.symbols
-        {'a', 'b', 'c', 'd'}
+        >>> sorted(dcfg.rules, key=repr)
+        [Rule('a' => 'b' 'c' 'd')]
+        >>> sorted(dcfg.symbols)
+        ['a', 'b', 'c', 'd']
         """
         rule_found = False
         possible_rule_ids = list(self.__graph.successors(rule.lhs))  # cast to list, to make a copy
@@ -147,8 +147,8 @@ class DCFG:
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
-        >>> dcfg.symbols
-        {'y', 'a', 'x', 'b', 'c', 'd', 'z'}
+        >>> sorted(dcfg.symbols)
+        ['a', 'b', 'c', 'd', 'x', 'y', 'z']
         """
         return set(filter(lambda node: isinstance(node, str), self.__graph.nodes))
 
@@ -166,8 +166,8 @@ class DCFG:
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
         >>> dcfg.add_rule(Rule("c", ("1", "2", "3")))
-        >>> dcfg.terminals
-        {'b', 'x', 'z', '1', '3', 'y', '2', 'd'}
+        >>> sorted(dcfg.terminals)
+        ['1', '2', '3', 'b', 'd', 'x', 'y', 'z']
         """
         return set(filter(lambda node: isinstance(node, str) and self.is_symbol_terminal(node), self.__graph.nodes))
 
@@ -185,8 +185,8 @@ class DCFG:
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
         >>> dcfg.add_rule(Rule("c", ("1", "2", "3")))
-        >>> dcfg.nonterminals
-        {'c', 'a'}
+        >>> sorted(dcfg.nonterminals)
+        ['a', 'c']
         """
         return set(filter(lambda node: isinstance(node, str) and not self.is_symbol_terminal(node), self.__graph.nodes))
 
@@ -208,15 +208,15 @@ class DCFG:
 
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
-        >>> dcfg.rules
-        {Rule('a' => 'b' 'c' 'd')}
-        >>> dcfg.symbols
-        {'d', 'a', 'c', 'b'}
+        >>> sorted(dcfg.rules, key=repr)
+        [Rule('a' => 'b' 'c' 'd')]
+        >>> sorted(dcfg.symbols)
+        ['a', 'b', 'c', 'd']
         >>> dcfg.remove_symbol("c")
-        >>> dcfg.rules
-        {Rule('a' => 'b' 'd')}
-        >>> dcfg.symbols
-        {'d', 'a', 'b'}
+        >>> sorted(dcfg.rules, key=repr)
+        [Rule('a' => 'b' 'd')]
+        >>> sorted(dcfg.symbols)
+        ['a', 'b', 'd']
         """
         self.make_symbol_terminal(symbol)
         self.__graph.remove_node(symbol)
@@ -235,10 +235,10 @@ class DCFG:
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
-        >>> dcfg.terminals
-        {'b', 'z', 'y', 'x', 'd'}
-        >>> dcfg.nonterminals
-        {'c', 'a'}
+        >>> sorted(dcfg.terminals)
+        ['b', 'd', 'x', 'y', 'z']
+        >>> sorted(dcfg.nonterminals)
+        ['a', 'c']
         >>> dcfg.is_symbol_terminal("a")
         False
         >>> dcfg.is_symbol_terminal("b")
@@ -266,15 +266,15 @@ class DCFG:
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
-        >>> dcfg.rules
-        {Rule('c' => 'x' 'y' 'z'), Rule('a' => 'b' 'c' 'd')}
-        >>> dcfg.symbols
-        {'y', 'a', 'x', 'b', 'c', 'd', 'z'}
+        >>> sorted(dcfg.rules, key=repr)
+        [Rule('a' => 'b' 'c' 'd'), Rule('c' => 'x' 'y' 'z')]
+        >>> sorted(dcfg.symbols)
+        ['a', 'b', 'c', 'd', 'x', 'y', 'z']
         >>> dcfg.make_symbol_terminal("c")
-        >>> dcfg.rules
-        {Rule('a' => 'b' 'c' 'd')}
-        >>> dcfg.symbols
-        {'a', 'b', 'c', 'd'}
+        >>> sorted(dcfg.rules, key=repr)
+        [Rule('a' => 'b' 'c' 'd')]
+        >>> sorted(dcfg.symbols)
+        ['a', 'b', 'c', 'd']
         """
         try:
             rule_ids = list(self.__graph.successors(symbol))  # cast to list, to make a copy
@@ -369,8 +369,8 @@ class DCFG:
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
         >>> dcfg.add_rule(Rule("c", ("1", "2", "3")))
-        >>> dcfg.sentences
-        {('b', 'x', 'y', 'z', 'd'), ('b', '1', '2', '3', 'd')}
+        >>> sorted(dcfg.sentences)
+        [('b', '1', '2', '3', 'd'), ('b', 'x', 'y', 'z', 'd')]
         """
         return set(self.iter_sentences())
 
