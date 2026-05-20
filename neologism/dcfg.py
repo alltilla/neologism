@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy as _copy
 import itertools
 import os
 import typing
@@ -377,11 +378,15 @@ class DCFG:
 
     def copy(self) -> DCFG:
         """
-        :return: A copy of the grammar.
+        :return: A fully independent copy of the grammar.
         :rtype: DCFG
+
+        .. note:: Mutations on the returned :class:`DCFG` — including future
+                  changes to node or edge attributes on the underlying graph —
+                  never affect the original.
         """
         copied = DCFG()
-        copied.__graph = self.__graph.copy()  # Shallow copy, but we do not store containers, so it is okay
+        copied.__graph = _copy.deepcopy(self.__graph)
         copied.__next_rule_id = self.__next_rule_id
         copied.__start_symbol = self.__start_symbol
 

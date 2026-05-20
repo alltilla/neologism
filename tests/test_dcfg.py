@@ -387,8 +387,14 @@ def test_copy(dcfg: DCFG):
     assert copied.symbols == dcfg.symbols
     assert copied.start_symbol == dcfg.start_symbol
 
-    new_rule = Rule("NT_1", ("foo",))
-    dcfg.add_rule(new_rule)
+    rule_added_to_original = Rule("NT_1", ("foo",))
+    dcfg.add_rule(rule_added_to_original)
 
-    assert new_rule in dcfg.rules
-    assert new_rule not in copied.rules
+    assert rule_added_to_original in dcfg.rules
+    assert rule_added_to_original not in copied.rules
+
+    rule_added_to_copy = Rule("NT_1", ("bar",))
+    copied.add_rule(rule_added_to_copy)
+
+    assert rule_added_to_copy in copied.rules
+    assert rule_added_to_copy not in dcfg.rules
