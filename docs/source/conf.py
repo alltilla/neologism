@@ -1,4 +1,5 @@
 import sys
+from importlib.metadata import version as _package_version
 from pathlib import Path
 
 ROOT_DIR = Path(__file__).parents[2].resolve()
@@ -7,7 +8,7 @@ sys.path.insert(0, str(ROOT_DIR))
 project = "neologism"
 copyright = "2021, Attila Szakacs"
 author = "Attila Szakacs"
-release = Path(ROOT_DIR, "VERSION").read_text().rstrip()
+release = _package_version("neologism")
 extensions = [
     "sphinx.ext.duration",
     "sphinx.ext.doctest",
