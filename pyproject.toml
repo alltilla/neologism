@@ -15,6 +15,7 @@ classifiers = [
 packages = [{include = "neologism"}]
 include = [
     { path = "LICENSE", format = ["sdist", "wheel"] },
+    { path = "CHANGELOG.md", format = ["sdist", "wheel"] },
     { path = "neologism/py.typed", format = ["sdist", "wheel"] },
 ]
 
