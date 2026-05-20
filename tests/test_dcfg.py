@@ -361,6 +361,25 @@ def test_sentences_getter_empty_grammar():
     assert dcfg.sentences == set()
 
 
+def test_iter_sentences(dcfg: DCFG):
+    expected = {
+        ("t_1", "t_2", "t_2"),
+        ("t_3", "t_4"),
+        ("t_5", "t_6"),
+        ("t_5", "t_7"),
+        (),
+    }
+
+    iterator = dcfg.iter_sentences()
+    assert iter(iterator) is iterator  # actually lazy
+    assert set(iterator) == expected
+
+
+def test_iter_sentences_empty_grammar():
+    dcfg = DCFG()
+    assert list(dcfg.iter_sentences()) == []
+
+
 def test_copy(dcfg: DCFG):
     copied = dcfg.copy()
 

@@ -344,6 +344,37 @@ class DCFG:
 
         return utils.is_multidigraph_finite(self.__graph, self.start_symbol)
 
+    def iter_sentences(self) -> typing.Iterator[typing.Tuple[str, ...]]:
+        """
+        Yields all possible sentences of the grammar one at a time, starting
+        with :attr:`start_symbol`.
+
+        .. note:: If the grammar is not finite, sentences are generated from a copy of the grammar,
+                  which has been made finite.
+
+        .. note:: Unlike :attr:`sentences`, the stream is not deduplicated. Ambiguous grammars may
+                  yield the same sentence more than once. Wrap in :class:`set` if uniqueness matters.
+
+        .. seealso:: :attr:`sentences`, :func:`is_finite`, :attr:`start_symbol`
+
+        >>> dcfg = DCFG()
+        >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
+        >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
+        >>> dcfg.add_rule(Rule("c", ("1", "2", "3")))
+        >>> sorted(dcfg.iter_sentences())
+        [('b', '1', '2', '3', 'd'), ('b', 'x', 'y', 'z', 'd')]
+        """
+        if self.start_symbol is None:
+            return
+
+        dcfg = self
+
+        if not self.is_finite():
+            dcfg = self.copy()
+            utils.remove_loops_from_multidigraph(dcfg.__graph, dcfg.start_symbol)
+
+        yield from dcfg.__iter_expand_symbol(dcfg.start_symbol)
+
     @property
     def sentences(self) -> typing.Set[typing.Tuple[str, ...]]:
         """
@@ -353,7 +384,7 @@ class DCFG:
         .. note:: If the grammar is not finite, sentences are generated from a copy of the grammar,
                   which has been made finite.
 
-        .. seealso:: :func:`is_finite`, :attr:`start_symbol`
+        .. seealso:: :func:`iter_sentences`, :func:`is_finite`, :attr:`start_symbol`
 
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
@@ -362,16 +393,7 @@ class DCFG:
         >>> dcfg.sentences
         {('b', 'x', 'y', 'z', 'd'), ('b', '1', '2', '3', 'd')}
         """
-        if self.start_symbol is None:
-            return set()
-
-        dcfg = self
-
-        if not self.is_finite():
-            dcfg = self.copy()
-            utils.remove_loops_from_multidigraph(dcfg.__graph, dcfg.start_symbol)
-
-        return set(dcfg.__iter_expand_symbol(dcfg.start_symbol))
+        return set(self.iter_sentences())
 
     # Misc
 
