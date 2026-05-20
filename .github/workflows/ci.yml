@@ -48,7 +48,10 @@ jobs:
         run: |
           if [ "${{ matrix.mode }}" = "installed" ]
           then
-            pytest -p no:cov --import-mode=importlib
+            # Installed-mode just verifies the wheel ships correctly; clear the
+            # pyproject addopts so --cov flags don't reach a pytest without the
+            # cov plugin installed.
+            pytest -o "addopts=" --import-mode=importlib
           else
             poetry run pytest --cov-fail-under=100
           fi

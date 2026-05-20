@@ -42,7 +42,7 @@ jobs:
         run: pip install dist/*.whl pytest
 
       - name: self-test
-        run: pytest -p no:cov --import-mode=importlib
+        run: pytest -o "addopts=" --import-mode=importlib
 
       - name: upload package (test.pypi.org)
         if: github.event.inputs.is-stable-release == 'false'
