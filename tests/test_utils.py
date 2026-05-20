@@ -1,7 +1,6 @@
 import pytest
 from neologism.utils import (
     is_multidigraph_finite,
-    get_all_combinations,
     raise_type_error_if_not_type_of,
     raise_type_error_if_not_type_of_multiple,
     remove_loops_from_multidigraph,
@@ -55,22 +54,3 @@ def test_remove_loops_from_multidigraph(infinite_multidigraph: MultiDiGraph):
     remove_loops_from_multidigraph(infinite_multidigraph, "a")
     assert is_multidigraph_finite(infinite_multidigraph, "a")
     assert not infinite_multidigraph.has_edge("d", "a")
-
-
-def test_get_all_combinations():
-    possibilites_in_each_position = [
-        [["00"], ["01"]],
-        [["10"], ["11"], ["120", "121"]],
-        [],
-        [["30"]],
-    ]
-    expected = [
-        ["00", "10", "30"],
-        ["01", "10", "30"],
-        ["00", "11", "30"],
-        ["01", "11", "30"],
-        ["00", "120", "121", "30"],
-        ["01", "120", "121", "30"],
-    ]
-
-    assert get_all_combinations(possibilites_in_each_position) == expected

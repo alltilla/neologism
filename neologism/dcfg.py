@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import itertools
 import os
 import typing
 
@@ -8,8 +9,6 @@ import networkx
 from . import utils
 from .rule import Rule
 from .yacc import parse as yacc_parse
-
-Clause = typing.List[str]  # Part of a sentence
 
 
 class RuleId(int):
@@ -372,13 +371,7 @@ class DCFG:
             dcfg = self.copy()
             utils.remove_loops_from_multidigraph(dcfg.__graph, dcfg.start_symbol)
 
-        sentences_as_list = dcfg.__expand_symbol(dcfg.start_symbol)
-
-        sentences = set()
-        for sentence in sentences_as_list:
-            sentences.add(tuple(sentence))
-
-        return sentences
+        return set(dcfg.__iter_expand_symbol(dcfg.start_symbol))
 
     # Misc
 
@@ -497,33 +490,24 @@ class DCFG:
 
         return Rule(lhs, rhs)
 
-    def __expand_rhs_of_rule_by_id(self, rule_id: RuleId) -> typing.List[Clause]:
+    def __iter_expand_rhs_of_rule_by_id(self, rule_id: RuleId) -> typing.Iterator[typing.Tuple[str, ...]]:
         assert isinstance(rule_id, RuleId)
 
-        expansions_of_each_rhs_symbol: typing.List[typing.List[Clause]] = []
-
         rhs = self.__get_rhs_by_rule_id(rule_id)
-        for symbol in rhs:
-            expansions_of_each_rhs_symbol.append(self.__expand_symbol(symbol))
+        per_position = [list(self.__iter_expand_symbol(symbol)) for symbol in rhs]
 
-        return utils.get_all_combinations(expansions_of_each_rhs_symbol)
+        for combo in itertools.product(*per_position):
+            yield tuple(itertools.chain.from_iterable(combo))
 
-    def __expand_symbol(self, symbol: str) -> typing.List[Clause]:
+    def __iter_expand_symbol(self, symbol: str) -> typing.Iterator[typing.Tuple[str, ...]]:
         assert isinstance(symbol, str)
 
-        expansions: typing.List[Clause] = []
-
         if self.is_symbol_terminal(symbol):
-            expansion: Clause = [symbol]
-            expansions.append(expansion)
+            yield (symbol,)
+            return
 
-            return expansions
-
-        rule_ids = self.__graph.successors(symbol)
-        for rule_id in rule_ids:
-            expansions.extend(self.__expand_rhs_of_rule_by_id(rule_id))
-
-        return expansions
+        for rule_id in self.__graph.successors(symbol):
+            yield from self.__iter_expand_rhs_of_rule_by_id(rule_id)
 
     def __remove_rule_by_id(self, rule_id: RuleId) -> None:
         related_symbols = set()
