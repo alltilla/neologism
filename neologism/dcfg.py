@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import typing
 
 import networkx
@@ -393,24 +394,38 @@ class DCFG:
 
         return copied
 
-    def load_yacc_file(self, file_path: str) -> None:
+    @classmethod
+    def from_yacc_file(
+        cls,
+        file_path: str | os.PathLike[str],
+        bison_path: str | None = None,
+    ) -> DCFG:
         """
-        Loads rules from a yacc file.
+        Construct a :class:`DCFG` by loading rules from a bison-style yacc file.
 
-        .. note:: Using this function needs ``bison`` to be installed and be on ``PATH``.
+        Bison-specific cleanup is applied: the ``$end`` terminal is removed and
+        :attr:`start_symbol` is set to ``$accept``.
+
+        .. note:: This function needs ``bison`` to be installed and on ``PATH``
+                  (or located via :attr:`bison_path`).
 
         :param file_path: The path of the yacc file.
-        :type file_path: str
+        :type file_path: str | os.PathLike[str]
+
+        :param bison_path: Optional ``PATH`` override used to locate ``bison``.
+        :type bison_path: str | None
 
         :raise ChildProcessError: If ``bison`` is not available on the system.
+        :raise YaccDecodeError: If ``bison`` fails to parse the yacc file.
         """
-        rules = yacc_parse(file_path)
+        dcfg = cls()
+        for rule in yacc_parse(os.fspath(file_path), bison_path):
+            dcfg.add_rule(rule)
 
-        for rule in rules:
-            self.add_rule(rule)
+        dcfg.remove_symbol("$end")
+        dcfg.start_symbol = "$accept"
 
-        self.remove_symbol("$end")
-        self.start_symbol = "$accept"
+        return dcfg
 
     def load_dcfg(self, dcfg: DCFG) -> None:
         """

@@ -25,7 +25,7 @@ def dcfg() -> DCFG:
     return dcfg
 
 
-def test_load_yacc_file():
+def test_from_yacc_file():
     test_yacc = r"""
         %token t_1
         %token t_2
@@ -57,8 +57,7 @@ def test_load_yacc_file():
     with NamedTemporaryFile(mode="w") as f:
         f.write(test_yacc)
         f.flush()
-        dcfg = DCFG()
-        dcfg.load_yacc_file(f.name)
+        dcfg = DCFG.from_yacc_file(f.name)
 
     expected_symbols = {
         "$accept",
