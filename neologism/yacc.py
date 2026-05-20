@@ -2,6 +2,7 @@ import xml.etree.ElementTree as xml_parser
 from os import environ
 from subprocess import DEVNULL, Popen
 from tempfile import NamedTemporaryFile
+from typing import Optional
 
 from .rule import Rule
 
@@ -10,7 +11,7 @@ class YaccDecodeError(Exception):
     pass
 
 
-def __run_in_shell(command: list, custom_path: str = None):
+def __run_in_shell(command: list, custom_path: Optional[str] = None):
     env = environ.copy()
     if custom_path is not None:
         env["PATH"] = custom_path
@@ -21,7 +22,7 @@ def __run_in_shell(command: list, custom_path: str = None):
     return proc.returncode == 0
 
 
-def __yacc2xml(yacc_file_path: str, custom_path: str = None):
+def __yacc2xml(yacc_file_path: str, custom_path: Optional[str] = None):
     xml_file = NamedTemporaryFile()
 
     try:
@@ -51,5 +52,5 @@ def __xml2rules(xml_file):
     return rules
 
 
-def parse(file_path: str, custom_path: str = None):
+def parse(file_path: str, custom_path: Optional[str] = None):
     return __xml2rules(__yacc2xml(file_path, custom_path))
