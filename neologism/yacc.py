@@ -1,6 +1,6 @@
+import subprocess
 import xml.etree.ElementTree as xml_parser
 from os import environ
-from subprocess import DEVNULL, Popen
 from tempfile import NamedTemporaryFile
 from typing import Optional
 
@@ -11,25 +11,37 @@ class YaccDecodeError(Exception):
     pass
 
 
-def __run_in_shell(command: list, custom_path: Optional[str] = None):
+def __run_bison(command: list, custom_path: Optional[str] = None) -> subprocess.CompletedProcess:
     env = environ.copy()
     if custom_path is not None:
         env["PATH"] = custom_path
 
-    proc = Popen(command, stderr=DEVNULL, stdout=DEVNULL, env=env)
-    proc.wait()
-
-    return proc.returncode == 0
+    return subprocess.run(
+        command,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.PIPE,
+        env=env,
+        check=False,
+    )
 
 
 def __yacc2xml(yacc_file_path: str, custom_path: Optional[str] = None):
     xml_file = NamedTemporaryFile()
 
     try:
-        if not __run_in_shell(["bison", "--xml=" + xml_file.name, "--output=/dev/null", yacc_file_path], custom_path):
-            raise YaccDecodeError("Failed to parse yacc file: {}".format(yacc_file_path))
+        result = __run_bison(
+            ["bison", "--xml=" + xml_file.name, "--output=/dev/null", yacc_file_path],
+            custom_path,
+        )
     except FileNotFoundError:
         raise ChildProcessError("bison executable not found. PATH: {}".format(environ.get("PATH", "")))
+
+    if result.returncode != 0:
+        message = "Failed to parse yacc file: {}".format(yacc_file_path)
+        stderr = result.stderr.decode("utf-8", errors="replace").strip()
+        if stderr:
+            message = "{}\n{}".format(message, stderr)
+        raise YaccDecodeError(message)
 
     return xml_file
 

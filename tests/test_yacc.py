@@ -47,9 +47,14 @@ test_opts
 
 
 def test_failed_parse():
-    with pytest.raises(YaccDecodeError):
-        yacc_file = __create_temp_file_with_content("invalid yacc string")
+    yacc_file = __create_temp_file_with_content("invalid yacc string")
+    with pytest.raises(YaccDecodeError) as excinfo:
         parse(yacc_file.name)
+
+    message = str(excinfo.value)
+    assert yacc_file.name in message
+    # Bison should have something to say about an invalid yacc input; surface it.
+    assert "\n" in message, f"expected bison stderr in error message, got: {message!r}"
 
 
 def test_no_bison(yacc_file):
