@@ -58,8 +58,6 @@ class DCFG:
         :return: The rules, that define the grammar and contain the given symbol.
         :rtype: set[Rule]
 
-        :raise TypeError: If :attr:`symbol` is not an instance of :class:`str`.
-
         .. seealso:: :attr:`rules`
 
         >>> dcfg = DCFG()
@@ -70,8 +68,6 @@ class DCFG:
         >>> dcfg.rules_containing("c")
         {Rule('c' => 'x' 'y' 'z'), Rule('a' => 'b' 'c' 'd')}
         """
-        utils.raise_type_error_if_not_type_of(symbol, str)
-
         rules = set()
 
         rule_ids = set(self.__graph.predecessors(symbol)) | set(self.__graph.successors(symbol))
@@ -89,16 +85,12 @@ class DCFG:
         :param rule: The new rule to add.
         :type rule: Rule
 
-        :raise TypeError: If :attr:`rule` is not an instance of :class:`Rule`.
-
         >>> dcfg = DCFG()
         >>> dcfg.add_rule(Rule("a", ("b", "c", "d")))
         >>> dcfg.add_rule(Rule("c", ("x", "y", "z")))
         >>> dcfg.rules
         {Rule('c' => 'x' 'y' 'z'), Rule('a' => 'b' 'c' 'd')}
         """
-        utils.raise_type_error_if_not_type_of(rule, Rule)
-
         if self._rule_exists(rule):
             return
 
@@ -117,7 +109,6 @@ class DCFG:
         :param rule: The rule to remove.
         :type rule: Rule
 
-        :raise TypeError: If :attr:`rule` is not an instance of :class:`Rule`.
         :raise ValueError: If :attr:`rule` is not in the rules of the grammar.
 
         >>> dcfg = DCFG()
@@ -133,8 +124,6 @@ class DCFG:
         >>> dcfg.symbols
         {'a', 'b', 'c', 'd'}
         """
-        utils.raise_type_error_if_not_type_of(rule, Rule)
-
         rule_found = False
         possible_rule_ids = list(self.__graph.successors(rule.lhs))  # cast to list, to make a copy
 
@@ -207,7 +196,6 @@ class DCFG:
         :param symbol: Symbol to remove.
         :type symbol: str
 
-        :raise TypeError: If :attr:`symbol` is not an instance of :class:`str`.
         :raise ValueError: If :attr:`symbol` was not in the grammar.
 
         .. note:: If :attr:`symbol` was used by a rule in the grammar, it will be removed from the rule, too.
@@ -229,8 +217,6 @@ class DCFG:
         >>> dcfg.symbols
         {'d', 'a', 'b'}
         """
-        utils.raise_type_error_if_not_type_of(symbol, str)
-
         self.make_symbol_terminal(symbol)
         self.__graph.remove_node(symbol)
 
@@ -241,7 +227,6 @@ class DCFG:
         :param symbol: The symbol to check.
         :type symbol: str
 
-        :raise TypeError: If :attr:`symbol` is not an instance of :class:`str`.
         :raise ValueError: If :attr:`symbol` was not in the grammar.
 
         .. seealso:: :attr:`symbols`, :attr:`terminals`, :attr:`nonterminals`, :func:`make_symbol_terminal`
@@ -258,8 +243,6 @@ class DCFG:
         >>> dcfg.is_symbol_terminal("b")
         True
         """
-        utils.raise_type_error_if_not_type_of(symbol, str)
-
         try:
             return len(list(self.__graph.successors(symbol))) == 0
         except networkx.NetworkXError:
@@ -275,7 +258,6 @@ class DCFG:
         :param symbol: The symbol to be made terminal.
         :type symbol: str
 
-        :raise TypeError: If :attr:`symbol` is not an instance of :class:`str`.
         :raise ValueError: If :attr:`symbol` was not in the grammar.
 
         .. seealso:: :attr:`symbols`, :attr:`terminals`, :attr:`nonterminals`, :func:`is_symbol_terminal`
@@ -293,8 +275,6 @@ class DCFG:
         >>> dcfg.symbols
         {'a', 'b', 'c', 'd'}
         """
-        utils.raise_type_error_if_not_type_of(symbol, str)
-
         try:
             rule_ids = list(self.__graph.successors(symbol))  # cast to list, to make a copy
         except networkx.NetworkXError:
@@ -325,8 +305,6 @@ class DCFG:
 
     @start_symbol.setter
     def start_symbol(self, symbol: str) -> None:
-        utils.raise_type_error_if_not_type_of(symbol, str)
-
         if symbol not in self.__graph.nodes:
             raise ValueError("{} not in symbols".format(symbol))
 

@@ -1,4 +1,3 @@
-from . import utils
 import typing
 
 
@@ -9,10 +8,13 @@ class Rule:
     The API uses :class:`str` for symbols.
 
     :class:`Rule` is immutable, hashable and has its equivalence implemented.
+
+    .. warning:: Passing a :class:`str` as :attr:`rhs` is undefined behavior — strings
+                 are iterable, so the constructor would silently produce a per-character
+                 rule. Pass a tuple, list, or other iterable of symbol strings.
     """
 
-    def __init__(self, lhs: str, rhs: typing.Union[typing.Tuple[str, ...], list]) -> None:
-        utils.raise_type_error_if_not_type_of_multiple(rhs, [tuple, list])
+    def __init__(self, lhs: str, rhs: typing.Iterable[str]) -> None:
         self.__lhs = lhs
         self.__rhs = tuple(rhs)
 

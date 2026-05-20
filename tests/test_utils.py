@@ -1,29 +1,9 @@
 import pytest
 from neologism.utils import (
     is_multidigraph_finite,
-    raise_type_error_if_not_type_of,
-    raise_type_error_if_not_type_of_multiple,
     remove_loops_from_multidigraph,
 )
 from networkx import MultiDiGraph
-
-
-def test_raise_type_error_if_not_type_of():
-    test_str = "test"
-
-    raise_type_error_if_not_type_of(test_str, str)
-    with pytest.raises(TypeError):
-        raise_type_error_if_not_type_of(test_str, list)
-
-
-def test_raise_type_error_if_not_type_of_multiple():
-    test_str = "test"
-    test_int = 1337
-
-    raise_type_error_if_not_type_of_multiple(test_str, [str, int])
-    raise_type_error_if_not_type_of_multiple(test_int, [str, int])
-    with pytest.raises(TypeError):
-        raise_type_error_if_not_type_of(test_str, [list, set])
 
 
 @pytest.fixture
